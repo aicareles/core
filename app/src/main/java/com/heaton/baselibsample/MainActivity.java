@@ -18,10 +18,10 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    /*@BusUtils.Bus(tag = "main")
+    @BusUtils.Bus(tag = "main")
     public void noParamFun(User user) {//要安装插件
         Log.e(TAG, "noParamFun: "+user.toString());
-    }*/
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override

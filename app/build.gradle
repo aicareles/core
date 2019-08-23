@@ -88,11 +88,13 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation project(':baselib')
-    implementation project(':musiclib')
-    implementation 'cn.com.superLei:aop-arms:1.0.3'
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
+    implementation project(':baselib')
+    implementation project(':musiclib')
+    implementation 'cn.com.superLei:aop-arms:1.0.3'
     implementation 'cn.com.superLei:blelibrary:2.6.2'
+//    implementation 'com.github.aicareles.components:musiclib:v1.0.0'
+//    implementation 'com.github.aicareles.components:baselib:v1.0.0'
 }

@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'android-aspectjx'
-apply plugin: 'jiagu'
+//apply plugin: 'jiagu'
 
-jiagu {
+/*jiagu {
     jiaGuDir = "E:\\360jiagu\\jiagu"
     username = "18682176281"
     password = "liulei0911"
@@ -13,17 +13,17 @@ jiagu {
     storePassword = 'android'  //  密码
     keyAlias = 'bestway'   // 别名
     keyPassword = 'android'  //  密码
-}
+}*/
 
 android {
-    signingConfigs {
+   /* signingConfigs {
         config {
             keyAlias 'bestway'
             keyPassword 'android'
             storeFile file('F:/bestway.keystore')
             storePassword 'android'
         }
-    }
+    }*/
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.heaton.baselibsample"
@@ -31,10 +31,10 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        signingConfig signingConfigs.config
+//        signingConfig signingConfigs.config
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
+    /*buildTypes {
         release {
             minifyEnabled true
             zipAlignEnabled true // Zipalign优化
@@ -49,7 +49,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
         }
-    }
+    }*/
 
 
     applicationVariants.all { variant ->

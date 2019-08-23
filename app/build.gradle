@@ -1,0 +1,98 @@
+apply plugin: 'com.android.application'
+apply plugin: 'android-aspectjx'
+apply plugin: 'jiagu'
+
+jiagu {
+    jiaGuDir = "E:\\360jiagu\\jiagu"
+    username = "18682176281"
+    password = "liulei0911"
+    enable = true
+    debug = false
+
+    storeFile = file('F:/bestway.keystore')   // 签名文件位置
+    storePassword = 'android'  //  密码
+    keyAlias = 'bestway'   // 别名
+    keyPassword = 'android'  //  密码
+}
+
+android {
+    signingConfigs {
+        config {
+            keyAlias 'bestway'
+            keyPassword 'android'
+            storeFile file('F:/bestway.keystore')
+            storePassword 'android'
+        }
+    }
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.heaton.baselibsample"
+        minSdkVersion 18
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        signingConfig signingConfigs.config
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            zipAlignEnabled true // Zipalign优化
+            shrinkResources true  // 移除无用的resource文件
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+        debug {
+            minifyEnabled true
+            zipAlignEnabled true // Zipalign优化
+            shrinkResources true  // 移除无用的resource文件
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+    }
+
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "BaseLibSample-v${defaultConfig.versionName}-${variant.productFlavors[0].name}.apk"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    flavorDimensions "default"
+    productFlavors {
+        beta {
+            dimension "default"
+        }
+        server {
+            dimension "default"
+        }
+        google {
+            dimension "default"
+        }
+        productFlavors.all { flavor ->
+            flavor.manifestPlaceholders = [CHANNEL_VALUE: name]
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation project(':baselib')
+    implementation project(':musiclib')
+    implementation 'cn.com.superLei:aop-arms:1.0.3'
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    implementation 'cn.com.superLei:blelibrary:2.6.2'
+}

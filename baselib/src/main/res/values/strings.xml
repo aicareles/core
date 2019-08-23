@@ -1,0 +1,14 @@
+<resources>
+    <string name="baselib_app_name">BaseLib</string>
+
+    <string name="sure">确定</string>
+    <string name="cancel">取消</string>
+    <string name="total_size">文件大小：%1$.2fMB</string>
+    <string name="find_new_version">发现新版本</string>
+    <string name="size">大小</string>
+    <string name="update_title">应用更新</string>
+
+    <string name="gps_tip">提示</string>
+    <string name="open_gps">请打开GPS,以便发现相关蓝牙设备</string>
+    <string name="gps_location_request">扫描低功率蓝牙设备，应用需要拥有访问设备位置的权限。这是因为Bluetooth beacons蓝牙信标，可用于确定手机和用户的位置。但本应用不会使用您的位置信息，开启次权限只是为了扫描到蓝牙设备</string>
+</resources>

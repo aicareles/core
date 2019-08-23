@@ -1,0 +1,54 @@
+#
+# generated on 2016/05/20 03:06:00
+#
+# --table-start--
+dataClass=com.heaton.musiclib.vo.MusicVO
+tableName=music
+# --table-fields-start--
+# --field-start--
+fieldName=id
+generatedId=true
+# --field-end--
+# --field-start--
+fieldName=url
+canBeNull=false
+unique=true
+# --field-end--
+# --field-start--
+fieldName=title
+# --field-end--
+# --field-start--
+fieldName=playCount
+defaultValue=0
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=addDate
+defaultValue=0
+# --field-end--
+# --field-start--
+fieldName=duration
+defaultValue=0
+# --field-end--
+# --field-start--
+fieldName=artist
+# --field-end--
+# --field-start--
+fieldName=sort
+defaultValue=0
+# --field-end--
+# --field-start--
+fieldName=album
+defaultValue=
+# --field-end--
+# --field-start--
+fieldName=fileSize
+defaultValue=0
+# --field-end--
+# --field-start--
+fieldName=internet
+defaultValue=0
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################

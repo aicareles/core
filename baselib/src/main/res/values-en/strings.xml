@@ -1,0 +1,14 @@
+<resources>
+    <string name="baselib_app_name">BaseLib</string>
+
+    <string name="sure">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="total_size">Size：%1$.2fMB</string>
+    <string name="find_new_version">New version</string>
+    <string name="size">Size</string>
+    <string name="update_title">Update</string>
+
+    <string name="gps_tip">Tips</string>
+    <string name="open_gps">Please turn on GPS to discover related Bluetooth devices</string>
+    <string name="gps_location_request">Scanning low-power Bluetooth devices requires the app to have access to the device location. This is because the Bluetooth beacons are used to determine the location of the phone and the user. However, this app does not use your location information. Turning on secondary permissions is only for scanning to Bluetooth devices.</string>
+</resources>

@@ -1,0 +1,4 @@
+<resources>
+    <string name="musiclib_app_name">MusicLib</string>
+    <string name="unknown">未知歌手</string>
+</resources>

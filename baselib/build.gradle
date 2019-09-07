@@ -24,6 +24,9 @@ android {
         }
     }
 
+//    //所有的资源须以baselib_开头
+//    resourcePrefix 'baselib_'
+
     lintOptions {
         abortOnError false
     }

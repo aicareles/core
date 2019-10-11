@@ -18,7 +18,7 @@ public class LogUtils {
     /**
      * 在application调用初始化
      */
-    public static void logInit() {
+    public static void logInit(final boolean isLoggable) {
         FormatStrategy formatStrategy = PrettyFormatStrategy.newBuilder()
                 .showThreadInfo(false)  // (Optional) Whether to show thread info or not. Default true
                 .methodCount(0)         // (Optional) How many method line to show. Default 2
@@ -29,7 +29,7 @@ public class LogUtils {
         Logger.addLogAdapter(new AndroidLogAdapter(formatStrategy){
             @Override
             public boolean isLoggable(int priority, @Nullable String tag) {
-                return BuildConfig.DEBUG;
+                return isLoggable;
             }
         });
     }

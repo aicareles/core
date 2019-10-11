@@ -12,9 +12,14 @@ import com.heaton.baselib.utils.LogUtils;
 public class BaseLibApi {
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
-    public static void init(Context context){
+
+    public static void init(Context context, Options options){
         mContext = context;
-        LogUtils.logInit();
+        setLoggable(options.isLoggable());
+    }
+
+    private static void setLoggable(boolean isLoggable){
+        LogUtils.logInit(isLoggable);
     }
 
     public static Context getContext(){

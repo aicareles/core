@@ -16,9 +16,9 @@ import com.heaton.baselib.manager.UpdateManager;
 import com.heaton.baselib.manager.UploadManager;
 import com.heaton.baselib.utils.LogUtils;
 import com.heaton.baselib.utils.SPUtils;
+import com.heaton.baselibsample.R;
 import com.heaton.baselibsample.TwoActivity;
 import com.heaton.baselibsample.bean.Article;
-import com.heaton.baselibsample.R;
 import com.heaton.baselibsample.bean.User;
 import com.heaton.baselibsample.setting.SettingFragment;
 

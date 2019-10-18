@@ -93,7 +93,7 @@ dependencies {
 
     implementation project(':baselib')
     implementation project(':musiclib')
-    implementation 'cn.com.superLei:aop-arms:1.0.3'
+    implementation 'cn.com.superLei:aop-arms:1.0.4'
     implementation 'cn.com.superLei:blelibrary:2.6.2'
 //    implementation 'com.github.aicareles.components:musiclib:v1.0.0'
 //    implementation 'com.github.aicareles.components:baselib:v1.0.0'

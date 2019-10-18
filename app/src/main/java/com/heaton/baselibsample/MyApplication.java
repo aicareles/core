@@ -42,7 +42,7 @@ public class MyApplication extends Application {
         super.onCreate();
         mApplication = this;
         BaseLibApi.init(this, new Options(true));
-        AopArms.init(this);
+//        AopArms.init(this);
 
     }
 

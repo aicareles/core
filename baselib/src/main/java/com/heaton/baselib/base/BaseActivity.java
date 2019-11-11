@@ -77,6 +77,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         return false;
     }
 
+    protected boolean isPortrait(){
+        return true;
+    }
+
     protected abstract int layoutId();
 
     protected abstract void bindData();
@@ -152,8 +156,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void setTranslucentStatus() {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        // 设置竖屏
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        // 设置横竖屏
+        setRequestedOrientation(isPortrait()?ActivityInfo.SCREEN_ORIENTATION_PORTRAIT:ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         GlobalStatusBarUtil.setStatusColor(this, getStatusBarColorId());
         GlobalStatusBarUtil.setStatusBarDarkFont(this, isDarkFont());
     }

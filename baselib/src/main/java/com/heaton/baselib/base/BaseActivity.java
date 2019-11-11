@@ -77,7 +77,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         return false;
     }
 
-
     protected boolean isPortrait(){
         return true;
     }

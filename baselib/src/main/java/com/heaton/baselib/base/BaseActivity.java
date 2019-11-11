@@ -70,7 +70,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         GlobalStatusBarUtil.setFitsSystemWindows(this, true);
     }
 
-
     /**
      * 是否状态栏全透明沉浸式
      */

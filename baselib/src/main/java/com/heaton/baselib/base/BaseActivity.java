@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -23,12 +22,13 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.heaton.baselib.R;
-import com.heaton.baselib.app.language.LanguageUtil;
+import com.heaton.baselib.app.language.LanguageManager;
 import com.heaton.baselib.utils.AppUtils;
 import com.heaton.baselib.utils.GlobalStatusBarUtil;
 
@@ -36,13 +36,14 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 /**
- * Author: arze
+ * Author: jerry
  * Date: 2018/4/8
  * Time: 23:28
  */
 
 public abstract class BaseActivity extends AppCompatActivity {
 
+    protected final String TAG = this.getClass().getSimpleName();
     public Toolbar toolbar;
     public TextView abTitle;
     private AlertDialog mProgressDialog;
@@ -50,9 +51,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setFullScreen();
         super.onCreate(savedInstanceState);
         setTranslucentStatus();
         setContentView(layoutId());
+        setHideBottomUIMenu();
         initNavagation();
         initToolBar();
         unbind = ButterKnife.bind(this);
@@ -70,6 +73,21 @@ public abstract class BaseActivity extends AppCompatActivity {
         GlobalStatusBarUtil.setFitsSystemWindows(this, true);
     }
 
+    private void setFullScreen(){
+        if (isFullScreen()){
+            this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            this.getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN
+            );
+        }
+    }
+
+    private void setHideBottomUIMenu(){
+        if (isHideBottomUIMenu()){
+            hideBottomUIMenu();
+        }
+    }
 
     /**
      * 是否状态栏全透明沉浸式
@@ -78,8 +96,28 @@ public abstract class BaseActivity extends AppCompatActivity {
         return false;
     }
 
+    /**
+     * 是否竖屏
+     * @return
+     */
     protected boolean isPortrait(){
         return true;
+    }
+
+    /**
+     * 是否全屏
+     * @return
+     */
+    protected boolean isFullScreen(){
+        return false;
+    }
+
+    /**
+     * 是否隐藏虚拟键
+     * @return
+     */
+    protected boolean isHideBottomUIMenu(){
+        return false;
     }
 
     protected abstract int layoutId();
@@ -87,6 +125,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected abstract void bindData();
 
     protected void bindListener(){}
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        setHideBottomUIMenu();
+    }
 
     @Override
     protected void onDestroy() {
@@ -108,10 +152,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         return LayoutInflater.from(this).inflate(layoutIds, null);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(LanguageUtil.attachBaseContext(newBase, LanguageUtil.getSaveLanguage(newBase)));
+        super.attachBaseContext(LanguageManager.attachBaseContext(newBase));
     }
 
     //自己新添加的
@@ -179,36 +222,6 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     protected boolean isDarkFont() {
         return false;
-    }
-
-    /**
-     * 检查GPS是否打开
-     */
-    protected void isGpsOpen() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            if (!AppUtils.isGpsOpen(this)){
-                new AlertDialog.Builder(this)
-                        .setCancelable(false)
-                        .setTitle(R.string.gps_tip)
-                        .setMessage(R.string.open_gps)
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .setPositiveButton(R.string.sure, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                //弹出到设置界面
-                                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                startActivity(intent);
-                            }
-                        })
-                        .create().show();
-            }
-        }
     }
 
     /**

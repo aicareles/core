@@ -2,7 +2,7 @@ package com.heaton.baselibsample.fragment;
 
 import android.Manifest;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
@@ -17,8 +17,9 @@ import com.heaton.baselibsample.adapter.LocalMusicAdapter;
 import com.heaton.baselibsample.R;
 import com.heaton.musiclib.FftConvertUtils;
 import com.heaton.musiclib.MusicManager;
-import com.heaton.musiclib.player.MediaPlayer;
+import com.heaton.musiclib.player.MediaPlayerCompat;
 import com.heaton.musiclib.player.callback.MusicScanCallback;
+import com.heaton.musiclib.player.callback.OnDataCaptureListener;
 import com.heaton.musiclib.player.callback.PlayStateCallback;
 import com.heaton.musiclib.player.callback.RecordDataCallBack;
 import com.heaton.musiclib.player.callback.ServiceConnectedCallback;
@@ -62,6 +63,8 @@ public class MusicFragment extends BaseFragment implements EasyPermissions.Permi
     TextView tvSbDuration;
     @BindView(R.id.btn_record)
     Button btnRecord;
+    @BindView(R.id.btn_rhythm)
+    Button btnRhythm;
     private MusicManager mMusicManager;
     private ArrayList<MusicVO> mMusicList;
     private LocalMusicAdapter mLocalMusicAdapter;
@@ -85,6 +88,8 @@ public class MusicFragment extends BaseFragment implements EasyPermissions.Permi
         lvLocal.setAdapter(mLocalMusicAdapter);
         mMusicManager = MusicManager.getInstance();
         mMusicManager.init(getContext());
+        //需要audio权限
+        mMusicManager.setMediaPlayerType(MediaPlayerCompat.PlayerType.NATIVE_PLAYER);
         requestReadPermissions();
     }
 
@@ -94,6 +99,7 @@ public class MusicFragment extends BaseFragment implements EasyPermissions.Permi
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser){
+                    Log.e(TAG, "onProgressChanged: "+progress);
                     mMusicManager.changeSeek(progress);
                 }
             }
@@ -114,6 +120,7 @@ public class MusicFragment extends BaseFragment implements EasyPermissions.Permi
         mMusicManager.setServiceConnectedCallback(new ServiceConnectedCallback() {
             @Override
             public void onServiceConnected() {
+
             }
         });
 
@@ -124,6 +131,7 @@ public class MusicFragment extends BaseFragment implements EasyPermissions.Permi
 
             @Override
             public void onStateChange(int state, int mode, int position) {
+                Log.e(TAG, "onStateChange: "+state);
                 if (mMusicList.size() > 0){
                     MusicVO musicVO = mMusicList.get(position);
                     tvTitle.setText(musicVO.title);
@@ -138,14 +146,10 @@ public class MusicFragment extends BaseFragment implements EasyPermissions.Permi
                 }
                 switch (state) {
                     case PlayerFinal.STATE_PLAY:
-                        ivPlay.setImageResource(R.mipmap.pause);
-                        break;
                     case PlayerFinal.STATE_CONTINUE:
                         ivPlay.setImageResource(R.mipmap.pause);
                         break;
                     case PlayerFinal.STATE_PAUSE:
-                        ivPlay.setImageResource(R.mipmap.play);
-                        break;
                     case PlayerFinal.STATE_STOP:
                         ivPlay.setImageResource(R.mipmap.play);
                         break;
@@ -154,6 +158,7 @@ public class MusicFragment extends BaseFragment implements EasyPermissions.Permi
 
             @Override
             public void onSeekChange(int progress, int max, String time, String duration) {
+                Log.e(TAG, "onSeekChange: ");
                 if (max <= 0)return;
                 sb.setProgress(progress*100/max);
                 tvSbTime.setText(time);
@@ -174,9 +179,9 @@ public class MusicFragment extends BaseFragment implements EasyPermissions.Permi
         });
 
         /**
-         * 音乐律动数据回调
+         * 音乐律动回调
          */
-        mMusicManager.setDataCaptureCallBack(new MediaPlayer.OnDataCaptureListener() {
+        mMusicManager.setDataCaptureCallback(new OnDataCaptureListener() {
             @Override
             public void onWaveDataCapture(short[] wave, int samplingRate) {
                 if (mMusicManager.isPlaying()){
@@ -198,10 +203,9 @@ public class MusicFragment extends BaseFragment implements EasyPermissions.Permi
                 Log.e(TAG, "onRecordData: >>>>" + level);
             }
         });
-
     }
 
-    @OnClick({R.id.iv_pre, R.id.iv_play, R.id.iv_next, R.id.btn_record})
+    @OnClick({R.id.iv_pre, R.id.iv_play, R.id.iv_next, R.id.btn_record, R.id.btn_rhythm})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_pre:
@@ -216,7 +220,24 @@ public class MusicFragment extends BaseFragment implements EasyPermissions.Permi
             case R.id.btn_record:
                 requestRecordPermissions();
                 break;
+            case R.id.btn_rhythm:
+                if (mMusicManager.isMusicRhythming()){
+                    btnRhythm.setText("开启律动");
+                    stopRhythm();
+                }else {
+                    btnRhythm.setText("停止律动");
+                    startRhythm();
+                }
+                break;
         }
+    }
+
+    private void startRhythm(){
+        mMusicManager.startRhythm();
+    }
+
+    private void stopRhythm(){
+        mMusicManager.stopRhythm();
     }
 
     @OnItemClick(R.id.lv_local)
@@ -248,7 +269,7 @@ public class MusicFragment extends BaseFragment implements EasyPermissions.Permi
     @AfterPermissionGranted(REQUEST_READ_PERMISSIONS)
     private void requestReadPermissions() {
         String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE};
-        if (EasyPermissions.hasPermissions(getActivity(), perms)) {
+        if (EasyPermissions.hasPermissions(mActivity, perms)) {
             mMusicManager.startScanMusic(new MusicScanCallback() {
                 @Override
                 public void onMusicScanResult(List<MusicVO> musicList) {
@@ -283,17 +304,11 @@ public class MusicFragment extends BaseFragment implements EasyPermissions.Permi
     @AfterPermissionGranted(REQUEST_RECORD_AUDIO_PERMISSIONS)
     private void requestRecordPermissions() {
         String[] perms = {Manifest.permission.RECORD_AUDIO};
-        if (EasyPermissions.hasPermissions(getActivity(), perms)) {
+        if (EasyPermissions.hasPermissions(mActivity, perms)) {
             mMusicManager.startRecord();
         } else {
             EasyPermissions.requestPermissions(this, "获取麦克风数据需要录制权限", REQUEST_RECORD_AUDIO_PERMISSIONS, perms);
         }
-    }
-
-    @Override
-    public boolean onBackPressed() {
-        FragmentHold.showFragment(getFragmentManager(), HomeFragment.newInstance());
-        return true;//处理完返回true表示该返回事件Fragment处理掉了
     }
 
 }

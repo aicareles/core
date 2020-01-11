@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -22,10 +23,12 @@ import com.heaton.musiclib.BuildConfig;
 import com.heaton.musiclib.IPlayerCallback;
 import com.heaton.musiclib.MusicPlayer;
 import com.heaton.musiclib.R;
+import com.heaton.musiclib.player.MediaPlayerCompat;
 import com.heaton.musiclib.player.PlayerHelper;
 import com.heaton.musiclib.player.constant.PlayerFinal;
 import com.heaton.musiclib.vo.MusicVO;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Random;
@@ -257,6 +260,15 @@ public class PlayerService extends Service implements Runnable {
             }
             if (position > -1) {
                 servicePosition = position;
+                MediaPlayerCompat playerCompat = PlayerHelper.getPlayer();
+                if (playerCompat.isNativeMediaPlayer()){
+                    //解决第一次  seekTo无效的问题(提前初始化)
+                    try {
+                        playerCompat.play(serviceMusicList.get(servicePosition).url);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
             if (mode > -1) {
                 playMode = mode;
@@ -543,11 +555,11 @@ public class PlayerService extends Service implements Runnable {
          */
         @Override
         public int getAudioSessionId() throws RemoteException {
-//            if (BuildConfig.DEBUG) {
-//                Log.i(TAG, "getAudioSessionId:" + player.getMyMedia().getAudioSessionId());
-//            }
-//            return player.getMyMedia().getAudioSessionId();
-            return -1;
+            MediaPlayer mediaPlayer = (MediaPlayer) player.getPlayer().getMediaPlayer();
+            if (BuildConfig.DEBUG) {
+                Log.i(TAG, "getAudioSessionId:" + mediaPlayer.getAudioSessionId());
+            }
+            return mediaPlayer.getAudioSessionId();
         }
     };
 

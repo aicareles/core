@@ -41,16 +41,21 @@ public class BannerView extends LinearLayout {
         array.recycle();
     }
 
-    public void addBannerDot(){
+    /**
+     * 添加点索引
+     * @param width 点的宽度
+     * @param height 点的高度
+     * @param margin 左右间距
+     */
+    public void addBannerDot(int width, int height, int margin){
         ImageView imageView = new ImageView(getContext());
-        imageView.setLayoutParams(new ViewGroup.LayoutParams(10, 10));
+        imageView.setLayoutParams(new ViewGroup.LayoutParams(width, height));
         tips.add(imageView);
         imageView.setImageDrawable(drawableFocus);
         LayoutParams layoutParams = new LayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
-        layoutParams.leftMargin = 15;
-        layoutParams.rightMargin = 15;
-        layoutParams.bottomMargin = 20;
+        layoutParams.leftMargin = margin;
+        layoutParams.rightMargin = margin;
         addView(imageView, layoutParams);
     }
 

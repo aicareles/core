@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<am.widget.wraplayout.WrapLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -13,90 +13,72 @@
         android:id="@+id/getArticle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/getUser"
         android:text="获取文章"/>
 
     <Button
         android:id="@+id/permission"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/getArticle"
         android:text="请求权限"/>
 
     <Button
         android:id="@+id/retry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/permission"
         android:text="重试"/>
 
     <Button
         android:id="@+id/safe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/getArticle"
         android:text="铺获异常"/>
 
     <Button
         android:id="@+id/asyn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/getArticle"
-        android:layout_toRightOf="@+id/safe"
         android:text="异步"/>
 
     <Button
         android:id="@+id/scheduled"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/getArticle"
-        android:layout_toRightOf="@+id/asyn"
         android:text="定时任务"/>
 
     <Button
-        android:id="@+id/music"
+        android:id="@+id/asyn_delay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/getArticle"
-        android:layout_toRightOf="@+id/scheduled"
-        android:text="音乐界面"/>
+        android:text="异步-延迟"/>
 
     <Button
-        android:id="@+id/setting"
+        android:id="@+id/nav"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/scheduled"
-        android:text="设置"/>
+        android:text="跳转到nav-activity"/>
 
     <Button
-        android:id="@+id/two_activity"
+        android:id="@+id/dialog_default"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/scheduled"
-        android:layout_toEndOf="@+id/setting"
-        android:text="跳转新界面"/>
+        android:text="普通dialog"/>
 
     <Button
-        android:id="@+id/fragment1"
+        android:id="@+id/dialog_custom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/setting"
-        android:text="fragment1"/>
+        android:text="自定义dialog"/>
 
     <Button
-        android:id="@+id/fragment2"
+        android:id="@+id/dialog_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/setting"
-        android:layout_toRightOf="@+id/fragment1"
-        android:text="fragment2"/>
+        android:text="加载dialog"/>
 
     <Button
-        android:id="@+id/fragment3"
+        android:id="@+id/dialog_bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/setting"
-        android:layout_toRightOf="@+id/fragment2"
-        android:text="fragment3"/>
+        android:text="底部dialog"/>
 
-</RelativeLayout>
+</am.widget.wraplayout.WrapLayout>

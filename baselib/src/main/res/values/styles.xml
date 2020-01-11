@@ -1,0 +1,15 @@
+<resources>
+
+    <style name="BottomDialogStyle">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+    <style name="BottomDialogAnimation" parent="@android:style/Animation">
+        <item name="android:windowEnterAnimation">@anim/bottom_dialog_enter</item>
+        <item name="android:windowExitAnimation">@anim/bottom_dialog_exit</item>
+    </style>
+</resources>

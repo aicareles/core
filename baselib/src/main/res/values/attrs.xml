@@ -18,10 +18,15 @@
         <attr name="unfoucs_drawable" format="reference" />
     </declare-styleable>
 
-    <!--图片 点击后的效果-->
+    <!--图片/按钮 点击后的效果-->
     <declare-styleable name="SelectorButton">
         <attr name="normal_drawable" format="reference" />
         <attr name="pressed_drawable" format="reference" />
+    </declare-styleable>
+
+    <!--图片 点击后变灰效果-->
+    <declare-styleable name="ClickableImageView">
+        <attr name="pressed_alpha" format="float" />
     </declare-styleable>
 
     <!--时间滚轮-->
@@ -37,4 +42,11 @@
         <attr name="awv_scaleX" format="float" />
     </declare-styleable>
 
+    <declare-styleable name="NavigationBar">
+        <attr name="navigateTabTextColor" format="color|reference"/>
+        <attr name="navigateTabSelectedTextColor" format="color|reference"/>
+        <attr name="containerId" format="integer|reference"/>
+        <attr name="tabItemLayout" format="integer|reference"/>
+        <attr name="navigateTabTextSize" format="dimension|reference"/>
+    </declare-styleable>
 </resources>

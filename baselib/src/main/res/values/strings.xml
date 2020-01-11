@@ -11,4 +11,8 @@
     <string name="gps_tip">提示</string>
     <string name="open_gps">请打开GPS,以便发现相关蓝牙设备</string>
     <string name="gps_location_request">扫描低功率蓝牙设备，应用需要拥有访问设备位置的权限。这是因为Bluetooth beacons蓝牙信标，可用于确定手机和用户的位置。但本应用不会使用您的位置信息，开启次权限只是为了扫描到蓝牙设备</string>
+    <string name="down_fail">安装包下载失败，请检查网络</string>
+    <string name="retry">重试</string>
+    <string name="remind_later">稍后提醒</string>
+    <string name="download_url_error">下载地址不正确</string>
 </resources>

@@ -11,16 +11,18 @@ import android.view.View;
 
 import com.heaton.baselib.app.cache.ACache;
 import com.heaton.baselib.base.BaseFragment;
+import com.heaton.baselib.callback.RxCallBack;
 import com.heaton.baselib.crash.RCrashHandler;
 import com.heaton.baselib.manager.UpdateManager;
 import com.heaton.baselib.manager.UploadManager;
+import com.heaton.baselib.utils.DialogUtils;
 import com.heaton.baselib.utils.LogUtils;
+import com.heaton.baselib.utils.RxThreadUtils;
 import com.heaton.baselib.utils.SPUtils;
 import com.heaton.baselibsample.R;
-import com.heaton.baselibsample.TwoActivity;
 import com.heaton.baselibsample.bean.Article;
 import com.heaton.baselibsample.bean.User;
-import com.heaton.baselibsample.setting.SettingFragment;
+import com.heaton.baselibsample.navigation.NavigationActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +89,6 @@ public class HomeFragment extends BaseFragment {
         article.content = "just a test...";
 
         LogUtils.logd("initLog");
-        LogUtils.logd(TAG, "initLog>>>");
         LogUtils.loge("initLoge");
         LogUtils.loge("initLoge" + article.toString());
         LogUtils.logwtf("initLogwtf" + article.toString());
@@ -165,6 +166,15 @@ public class HomeFragment extends BaseFragment {
         Log.e(TAG, "useAync: " + Thread.currentThread().getName());
     }
 
+    private void asynDelay() {
+        RxThreadUtils.asyncThreadDelay(3000, new RxCallBack() {
+            @Override
+            public void execute() {
+                Log.e(TAG, "asynDelay:"+Thread.currentThread().getName());
+            }
+        });
+    }
+
     @Safe(callBack = "throwMethod")
     public void safe() {
         str.toString();
@@ -202,30 +212,6 @@ public class HomeFragment extends BaseFragment {
         Log.e(TAG, "taskExpiredCallback: >>>>");
     }
 
-    public void music(){
-        toFragment(MusicFragment.newInstance());
-    }
-
-    private void toFragment(Fragment fragment){
-        FragmentHold.showFragment(getFragmentManager(), fragment);
-    }
-
-    private void setting() {
-        toFragment(SettingFragment.newInstance());
-    }
-
-    public void fragment1() {
-        toFragment(Fragment1.newInstance());
-    }
-
-    public void fragment2() {
-        toFragment(Fragment2.newInstance());
-    }
-
-    public void fragment3() {
-        toFragment(Fragment3.newInstance());
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -233,8 +219,8 @@ public class HomeFragment extends BaseFragment {
     }
 
     @OnClick({R.id.getUser, R.id.getArticle, R.id.permission, R.id.retry, R.id.safe,
-            R.id.asyn, R.id.scheduled, R.id.music, R.id.setting, R.id.two_activity,
-            R.id.fragment1, R.id.fragment2, R.id.fragment3})
+            R.id.asyn, R.id.asyn_delay, R.id.scheduled, R.id.nav,
+            R.id.dialog_default, R.id.dialog_custom, R.id.dialog_progress, R.id.dialog_bottom})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.getUser:
@@ -255,26 +241,46 @@ public class HomeFragment extends BaseFragment {
             case R.id.asyn:
                 asyn();
                 break;
+            case R.id.asyn_delay:
+                asynDelay();
+                break;
             case R.id.scheduled:
                 scheduled();
                 break;
-            case R.id.music:
-                music();
+            case R.id.nav:
+                toActivity(NavigationActivity.class);
                 break;
-            case R.id.setting:
-                setting();
+            case R.id.dialog_default:
+                DialogUtils.showCommonDialog(mActivity, "提示", "这是普通的对话框", new DialogUtils.DialogCall() {
+                    @Override
+                    public void onPositive() {
+                        toast("positivie");
+                    }
+
+                    @Override
+                    public void onNegative() {
+                        toast("onNegative");
+                    }
+                });
                 break;
-            case R.id.two_activity:
-                toActivity(TwoActivity.class);
+            case R.id.dialog_custom:
+                DialogUtils.showCustomDialog(mActivity, "提示", "这是普通的对话框", R.layout.update_layout, new DialogUtils.DialogCall() {
+                    @Override
+                    public void onPositive() {
+                        toast("positivie");
+                    }
+
+                    @Override
+                    public void onNegative() {
+                        toast("onNegative");
+                    }
+                });
                 break;
-            case R.id.fragment1:
-                fragment1();
+            case R.id.dialog_progress:
+                DialogUtils.showProgressDialog(mActivity, "加载中...");
                 break;
-            case R.id.fragment2:
-                fragment2();
-                break;
-            case R.id.fragment3:
-                fragment3();
+            case R.id.dialog_bottom:
+                DialogUtils.showBottomDialog(mActivity, R.layout.dialog_bottom);
                 break;
         }
     }

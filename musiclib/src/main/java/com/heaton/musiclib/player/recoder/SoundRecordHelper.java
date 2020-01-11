@@ -71,8 +71,10 @@ public class SoundRecordHelper {
 
 	//停止录音
 	public void stop(){
-		audioRecord.stop();
-		recordFlag = false; 
+		if (audioRecord != null){
+			audioRecord.stop();
+		}
+		recordFlag = false;
 		recThread = null;
 	}
 

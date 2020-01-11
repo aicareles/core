@@ -2,7 +2,7 @@ package com.heaton.baselib.utils;
 
 import android.widget.Toast;
 
-import com.heaton.baselib.BaseLibApi;
+import com.heaton.baselib.BaseCoreAPI;
 
 
 /**
@@ -14,7 +14,7 @@ public class ToastUtil {
 
     public static void show(String msg) {
         if (mToast == null) {
-            mToast = Toast.makeText(BaseLibApi.getContext(), msg, Toast.LENGTH_SHORT);
+            mToast = Toast.makeText(BaseCoreAPI.getContext(), msg, Toast.LENGTH_SHORT);
         } else {
             mToast.setText(msg);
             mToast.setDuration(Toast.LENGTH_SHORT);
@@ -24,7 +24,7 @@ public class ToastUtil {
 
     public static void show(int msg) {
         if (mToast == null) {
-            mToast = Toast.makeText(BaseLibApi.getContext(), msg, Toast.LENGTH_SHORT);
+            mToast = Toast.makeText(BaseCoreAPI.getContext(), msg, Toast.LENGTH_SHORT);
         } else {
             mToast.setText(msg);
             mToast.setDuration(Toast.LENGTH_SHORT);

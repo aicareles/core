@@ -13,6 +13,9 @@ import android.media.MediaFormat;
 import android.os.Handler;
 import android.util.Log;
 
+import com.heaton.musiclib.player.callback.OnCompletionListener;
+import com.heaton.musiclib.player.callback.OnDataCaptureListener;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -48,14 +51,6 @@ public class MediaPlayer implements Runnable {
     //default
     public MediaPlayer() {
 
-    }
-
-    public interface OnCompletionListener {
-        void onCompletion(MediaPlayer player);
-    }
-
-    public interface OnDataCaptureListener {
-        void onWaveDataCapture(short[] wave, int samplingRate);
     }
 
     public interface OnPreparedListener {

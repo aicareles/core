@@ -13,7 +13,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -26,9 +25,10 @@ import com.heaton.baselib.BuildConfig;
 import com.heaton.baselib.FileProvider7;
 import com.heaton.baselib.LogInterceptor;
 import com.heaton.baselib.R;
-import com.heaton.baselib.app.Constance;
+import com.heaton.baselib.Constance;
 import com.heaton.baselib.utils.AppUtils;
 import com.heaton.baselib.bean.UpdateVO;
+import com.heaton.baselib.utils.LogUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -113,17 +113,17 @@ public class UpdateManager {
                         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 //						builder.setTitle("应用更新");
                         builder.setCancelable(false);
-                        builder.setMessage("安装包下载失败，请检查网络");
+                        builder.setMessage(R.string.down_fail);
                         final String url = (String) msg.obj;
                         final float size = mSize;
-                        builder.setPositiveButton("重试", new DialogInterface.OnClickListener() {
+                        builder.setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
                                 downloadFile(url, size, mShowDialog);
                             }
                         });
-                        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -169,13 +169,13 @@ public class UpdateManager {
                 try {
                     JSONObject dataObject = JSON.parseObject(json);
                     if (dataObject.getInteger("status") == 0){
-                        Log.i(TAG, "onResponse: 检测到新版本");
                         String data = dataObject.getString("data");
                         if (!TextUtils.isEmpty(data)) {
                             final UpdateVO updateVO = JSONObject.parseObject(data, UpdateVO.class);
                             if (updateVO != null) {
                                 int version = AppUtils.getVersionCode(mContext);
                                 if (!TextUtils.isEmpty(updateVO.app_url) && version >= 0 && updateVO.app_version_number > version) {
+                                    LogUtils.logi("onResponse: 检测到新版本");
                                     final String text = mContext.getResources().getString(R.string.find_new_version) + ":" + updateVO.app_version + "\n\n" + mContext.getResources().getString(R.string.size) + ":" + ((int) (updateVO.app_size / 1024 * 100)) / 100 + "MB\n\n" + updateVO.app_update;
                                     mHandler.post(new Runnable() {
                                         @Override
@@ -201,19 +201,19 @@ public class UpdateManager {
     public void showNoticeDialog(String updateMsg, String downloadUrl, float size, boolean showDialog) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setCancelable(false);
-        builder.setTitle("应用更新");
+        builder.setTitle(R.string.update_title);
         builder.setMessage(updateMsg);
         final String url = downloadUrl;
         final float s = size;
         final boolean show = showDialog;
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.sure, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 downloadFile(url, s, show);
             }
         });
-        builder.setNegativeButton("稍后提醒", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.remind_later, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -230,7 +230,7 @@ public class UpdateManager {
 
     public void downloadFile(String downloadUrl, float size, boolean showDialog) {
         if (TextUtils.isEmpty(downloadUrl)) {
-            Toast.makeText(mContext, "下载地址不正确", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, mContext.getString(R.string.download_url_error), Toast.LENGTH_LONG).show();
             return;
         }
         File path = Environment.getExternalStorageDirectory();
@@ -258,7 +258,7 @@ public class UpdateManager {
                 builder.setTitle("应用更新");
                 builder.setView(R.layout.update_layout);
                 mDownloadDialog = builder.create();
-                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(R.string.update_title, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();

@@ -1,10 +1,11 @@
 package com.heaton.musiclib.player;
 
+import java.io.IOException;
 import java.util.Random;
 
 import android.media.AudioManager;
-import android.util.Log;
 
+import com.heaton.musiclib.player.callback.OnCompletionListener;
 import com.heaton.musiclib.player.constant.PlayerFinal;
 import com.heaton.musiclib.player.service.PlayerService;
 
@@ -20,36 +21,33 @@ public class PlayerHelper {
     /**
 	 * 单例模式，让MediaPlayer对象只声明一次，多次调用。
 	 */
-	public static MediaPlayer myMedia = getMyMedia();
+	private static MediaPlayerCompat player;
 	private boolean mute;
 	private float volume;
 	private PlayerService mPlayerService;
 
 	public PlayerHelper(PlayerService playerService){
 		mPlayerService = playerService;
-		if (myMedia == null) {
-			myMedia = new MediaPlayer();
-		}
 	}
 
 	/**
 	 * 获取当前Media player的实例
 	 * @return
      */
-	public static MediaPlayer getMyMedia() {
-		if (myMedia == null) {
-			myMedia = new MediaPlayer();
+	public static MediaPlayerCompat getPlayer() {
+		if (player == null) {
+			player = new MediaPlayerCompat();
 		}
-		return myMedia;
+		return player;
 	}
 
 	public void mute(float volume){
 		mute = !mute;
 		if(mute){
 			this.volume = volume;
-			myMedia.setVolume(0,0);
+			player.setVolume(0,0);
 		}else{
-			myMedia.setVolume(this.volume,this.volume);
+			player.setVolume(this.volume,this.volume);
 		}
 	}
 
@@ -59,16 +57,13 @@ public class PlayerHelper {
 	 */
 	public boolean play(final String path) {
 		try {
-			myMedia.reset();
-			myMedia.setAudioStreamType(AudioManager.STREAM_MUSIC);
-			myMedia.setDataSource(path);
-			myMedia.prepare();
-			myMedia.start();
+			player.play(path);
+			player.start();
 			//设置播放完成之后的回调函数接口
-			myMedia.setOnCompletionListener(new MediaPlayer.OnCompletionListener()
+			player.setOnCompletionListener(new OnCompletionListener()
 			{
 				@Override
-				public void onCompletion(MediaPlayer mp) {
+				public void onCompletion(Object mediaPlay) {
 					// 歌曲播放完毕，根据播放模式选择下一首播放歌曲的position
 					// 播放模式在service中存放
 					// 歌曲播放列表和位置都在service中，在这直接更改service中的position和state
@@ -76,7 +71,7 @@ public class PlayerHelper {
 					{
 					// 单曲循环
 					case PlayerFinal.MODE_SINGLE:
-						myMedia.setLooping(true);
+						player.setLooping(true);
 						mPlayerService.state = PlayerFinal.STATE_PLAY;
 						break;
 					// 全部循环
@@ -120,6 +115,8 @@ public class PlayerHelper {
 			e.printStackTrace();
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return false;
 	}
@@ -128,23 +125,23 @@ public class PlayerHelper {
 	 * 暂停函数
 	 */
 	public void pause() {
-		myMedia.pause();
+		player.pause();
 	}
 
 	/**
 	 * 歌曲继续播放
 	 */
 	public void continuePlay() {
-        myMedia.start();// 歌曲继续播放
+        player.start();// 歌曲继续播放
 	}
 
 	/**
 	 * 歌曲停止
 	 */
 	public void stop() {
-//		if(isPlaying())
-		myMedia.stop();// 歌曲停止
-		myMedia = null;//销毁音乐线程
+		if(isPlaying())
+		player.stop();// 歌曲停止
+		player = null;//销毁音乐线程
 	}
 
 	/**
@@ -153,7 +150,7 @@ public class PlayerHelper {
 	 * @return int 歌曲时长
 	 */
 	public int getPlayCurrentTime() {
-		return myMedia.getCurrentPosition();
+		return player.getPlayCurrentTime();
 	}
 
 	/**
@@ -162,20 +159,21 @@ public class PlayerHelper {
 	 * @return int 歌曲时长
 	 */
 	public int getPlayDuration() {
-		return myMedia.getDuration();
+		return player.getPlayDuration();
 	}
 
 	/**
 	 * 指定播放位置
 	 */
 	public void seekToMusic(final int seek) {
-        if(myMedia.getPlayState() == PlayerStates.STOPPED){
-            //第一次未初始化
-            mPlayerService.state = PlayerFinal.STATE_PLAY;
-        }else {
-            myMedia.seekTo(seek);// 指定位置
-        }
-//		myMedia.start();// 开始播放
+		if (player.getMediaPlayer() instanceof MediaPlayer){
+			if(((MediaPlayer)player.getMediaPlayer()).getPlayState() == PlayerStates.STOPPED){
+				//第一次未初始化
+				mPlayerService.state = PlayerFinal.STATE_PLAY;
+				return;
+			}
+		}
+  		player.seekTo(seek);
 	}
 
 	/**
@@ -184,7 +182,7 @@ public class PlayerHelper {
 	 * @return
 	 */
 	public Boolean isPlaying() {
-		return myMedia.isPlaying();
+		return player.isPlaying();
 	}
 
 }

@@ -30,12 +30,9 @@ public abstract class BaseDialogFragment extends DialogFragment {
         params.gravity = Gravity.CENTER;
         window.setAttributes(params);
         window.setBackgroundDrawable(null);
-//        window.setBackgroundDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.progress_dialog_bg));
-//        window.setWindowAnimations(R.style.BottomDialog_Animation);
         //设置边距
         DisplayMetrics dm = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-//        getDialog().getWindow().setLayout((int) (dm.widthPixels * 0.72), ViewGroup.LayoutParams.WRAP_CONTENT);
         getDialog().getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
@@ -55,7 +52,7 @@ public abstract class BaseDialogFragment extends DialogFragment {
 
     protected abstract void bindData();
 
-    protected abstract void bindListener();
+    protected void bindListener(){}
 
     @Override
     public void onDestroy() {

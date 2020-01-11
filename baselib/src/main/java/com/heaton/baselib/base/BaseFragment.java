@@ -1,15 +1,17 @@
 package com.heaton.baselib.base;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.heaton.baselib.callback.HandleBackInterface;
 
@@ -18,9 +20,10 @@ import butterknife.Unbinder;
 
 
 public abstract class BaseFragment extends Fragment implements HandleBackInterface {
-
+    protected final String TAG = this.getClass().getSimpleName();
     protected View mRootView;
     private Unbinder mUnBinder;
+    protected FragmentActivity mActivity;
 
     @Nullable
     @Override
@@ -30,9 +33,20 @@ public abstract class BaseFragment extends Fragment implements HandleBackInterfa
             mRootView = inflater.inflate(layoutId(), null);
             mUnBinder = ButterKnife.bind(this, mRootView);
         }
+        return mRootView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         bindData();
         bindListener();
-        return mRootView;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = getActivity();
     }
 
     protected abstract int layoutId();
@@ -49,6 +63,14 @@ public abstract class BaseFragment extends Fragment implements HandleBackInterfa
         Intent intent = new Intent(getActivity(), cl);
         intent.putExtra(cl.getSimpleName(), bundle);
         startActivity(intent);
+    }
+
+    public void toast(int resid){
+        Toast.makeText(mActivity, resid, Toast.LENGTH_SHORT).show();
+    }
+
+    public void toast(String msg){
+        Toast.makeText(mActivity, msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override

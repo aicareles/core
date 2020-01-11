@@ -33,21 +33,16 @@ public class LogUtils {
             }
         });
     }
-    public static void logd(String tag, String message) {
-        Logger.d(tag,message);
+    public static void logd(String message, Object... args) {
+        Logger.d(message, args);
     }
-    public static void logd(String message) {
-        Logger.d(message);
-    }
+
     public static void loge(Throwable throwable, String message, Object... args) {
         Logger.e(throwable, message, args);
     }
 
     public static void loge(String message, Object... args) {
         Logger.e(message, args);
-    }
-    public static void loge(String message) {
-        Logger.e(message);
     }
 
     public static void logi(String message, Object... args) {

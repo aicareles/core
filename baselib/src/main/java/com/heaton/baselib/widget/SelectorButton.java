@@ -11,7 +11,6 @@ import com.heaton.baselib.R;
 
 /**
  * 代替selector选择器（图片按钮点击效果）
- * Created by jerry on 2018/8/16.
  */
 
 public class SelectorButton extends AppCompatButton {
@@ -25,7 +24,7 @@ public class SelectorButton extends AppCompatButton {
     }
 
     /**
-     * zyh:normal_drawable="@drawable/btn_login_normal" zyh:pressed_drawable="@drawable/btn_login_pressed"
+     * app:normal_drawable="@drawable/btn_login_normal" app:pressed_drawable="@drawable/btn_login_pressed"
      * @param context
      * @param attrs
      */
@@ -39,8 +38,6 @@ public class SelectorButton extends AppCompatButton {
         // System.out.println("count:" + count);
         for (int i = 0; i < count; i++) {
             int index = array.getIndex(i);
-            System.out.println("index:" + index);
-            System.out.println("draw:" + array.getDrawable(index));
             if (index == R.styleable.SelectorButton_normal_drawable) {
                 n = array.getDrawable(index);
 

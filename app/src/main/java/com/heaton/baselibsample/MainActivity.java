@@ -1,50 +1,69 @@
 package com.heaton.baselibsample;
 
+import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
+import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
-import com.heaton.baselib.utils.BusUtils;
-import com.heaton.baselib.utils.HandleBackUtil;
-import com.heaton.baselibsample.bean.User;
-import com.heaton.baselibsample.fragment.FragmentHold;
+import com.heaton.baselib.base.BaseActivity;
+import com.heaton.baselib.utils.LogUtils;
+import com.heaton.baselib.widget.NavigationBar;
 import com.heaton.baselibsample.fragment.HomeFragment;
+import com.heaton.baselibsample.fragment.MusicFragment;
+import com.heaton.baselibsample.fragment.SettingFragment;
+
+import butterknife.BindView;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
-    private static final String TAG = "MainActivity";
+    @BindView(R.id.navigationBar)
+    NavigationBar navigationBar;
 
-    /*@BusUtils.Bus(tag = "main")
-    public void noParamFun(User user) {//要安装插件
-        Log.e(TAG, "noParamFun: "+user.toString());
-    }*/
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (getDarkModeStatus(this)) {
+            setTheme(R.style.main_theme_dark);
+        }else {
+            setTheme(R.style.main_theme_light);
+        }
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        FragmentHold.showFragment(getSupportFragmentManager(), HomeFragment.newInstance());
+
+    }
+
+    @Override
+    protected int layoutId() {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    protected void bindData() {
+        LogUtils.loge(TAG+"getSupportFragmentManager:"+getSupportFragmentManager().hashCode());
+        LogUtils.logi(TAG+": >>>>>bindData");
+        setTitle(R.string.btn_sure);
+//        FragmentHold.showFragment(getSupportFragmentManager(), HomeFragment.newInstance());
+        navigationBar.addTab(HomeFragment.class, new NavigationBar.TabParam(R.mipmap.ic_launcher, R.mipmap.ic_launcher, "0"));
+        navigationBar.addTab(MusicFragment.class, new NavigationBar.TabParam(R.mipmap.ic_launcher, R.mipmap.ic_launcher, "1"));
+        navigationBar.addTab(SettingFragment.class, new NavigationBar.TabParam(R.mipmap.ic_launcher, R.mipmap.ic_launcher, "2"));
 
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         //将这一行注释掉，阻止activity保存fragment的状态,不然过段时间后会出现fragment重叠问题
-//        super.onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onBackPressed() {
-        if (!HandleBackUtil.handleBackPress(this)) {
+        /*if (!HandleBackUtil.handleBackPress(this)) {
 //            super.onBackPressed();
             home();
-        }
+        }*/
+        home();
     }
+
+
 
     private void home() {
         //实现Home键效果
@@ -54,15 +73,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        BusUtils.register(this);
+    //检查当前系统是否已开启暗黑模式
+    public static boolean getDarkModeStatus(Context context) {
+        int mode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        return mode == Configuration.UI_MODE_NIGHT_YES;
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        BusUtils.unregister(this);
-    }
 }

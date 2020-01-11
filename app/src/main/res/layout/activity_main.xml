@@ -3,12 +3,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".MainActivity"
+    android:background="?attr/main_bg_color"
+    android:configChanges="uiMode">
+
+    <include layout="@layout/toolbar_layout"/>
 
     <FrameLayout
-        android:id="@+id/fl_content"
+        android:id="@+id/main_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/appbar"
+        android:layout_above="@+id/navigationBar"/>
 
+    <com.heaton.baselib.widget.NavigationBar
+        android:id="@+id/navigationBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/white"
+        app:containerId="@+id/main_container"
+        app:tabItemLayout="@layout/nav_tabview"
+        app:navigateTabSelectedTextColor="?attr/main_text_color"
+        app:navigateTabTextColor="?attr/main_text_color" />
 
 </RelativeLayout>

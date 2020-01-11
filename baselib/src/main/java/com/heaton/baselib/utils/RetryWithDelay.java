@@ -1,6 +1,5 @@
 package com.heaton.baselib.utils;
 
-import android.util.DebugUtils;
 import android.util.Log;
 
 import java.util.concurrent.TimeUnit;

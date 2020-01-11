@@ -11,4 +11,8 @@
     <string name="gps_tip">Tips</string>
     <string name="open_gps">Please turn on GPS to discover related Bluetooth devices</string>
     <string name="gps_location_request">Scanning low-power Bluetooth devices requires the app to have access to the device location. This is because the Bluetooth beacons are used to determine the location of the phone and the user. However, this app does not use your location information. Turning on secondary permissions is only for scanning to Bluetooth devices.</string>
+    <string name="down_fail">Download failed, please check the network</string>
+    <string name="retry">Retry</string>
+    <string name="remind_later">Remind later</string>
+    <string name="download_url_error">Download url error</string>
 </resources>

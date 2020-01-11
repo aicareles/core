@@ -37,7 +37,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
- * 这个是解决handler内存泄漏的优化类，拷贝的别人的
+ * 解决handler内存泄漏的优化类
  */
 @SuppressWarnings("unused")
 public class WeakHandler {

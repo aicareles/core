@@ -9,11 +9,19 @@
     </style>
 
     <!--app默认主题  白天模式-->
-    <style name="Theme.DesignDemo" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:typeface">serif</item>
+    <style name="main_theme_light" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="main_text_color">@color/main_text_color_light</item>
+        <item name="main_bg_color">@color/main_bg_color_light</item>
+    </style>
+
+    //黑暗模式下的主题
+    <style name="main_theme_dark" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="main_text_color">@color/main_text_color_dark</item>
+        <item name="main_bg_color">@color/main_bg_color_dark</item>
     </style>
 
 </resources>

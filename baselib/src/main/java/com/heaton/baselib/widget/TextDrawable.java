@@ -13,10 +13,6 @@ import android.util.AttributeSet;
 
 import com.heaton.baselib.R;
 
-/**
- * Created by Dengxiao on 2016/11/8.
- */
-
 public class TextDrawable extends AppCompatTextView {
     private Drawable drawableLeft;
     private Drawable drawableRight;

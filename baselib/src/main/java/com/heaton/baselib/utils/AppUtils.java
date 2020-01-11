@@ -5,11 +5,15 @@ package com.heaton.baselib.utils;
  * 公司：希顿科技
  */
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -21,14 +25,18 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.annotation.RequiresPermission;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.heaton.baselib.R;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.UUID;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
@@ -59,7 +67,7 @@ public class AppUtils {
      * @return true 表示开启
      */
     public static boolean isGpsOpen(final Context context) {
-        LocationManager locationManager
+        /*LocationManager locationManager
                 = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         // 通过GPS卫星定位，定位级别可以精确到街（通过24颗卫星定位，在室外和空旷的地方定位准确、速度快）
         boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -68,8 +76,52 @@ public class AppUtils {
         if (gps || network) {
             return true;
         }
+        return false;*/
+        int locationMode = 0;
+        String locationProviders;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            try {
+                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+        } else {
+            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            return !TextUtils.isEmpty(locationProviders);
+        }
 
-        return false;
+    }
+
+    /**
+     * 检查GPS,并提示是否打开
+     */
+    public static void openGPS(final Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if (!AppUtils.isGpsOpen(activity)){
+                new AlertDialog.Builder(activity)
+                        .setCancelable(false)
+                        .setTitle(R.string.gps_tip)
+                        .setMessage(R.string.open_gps)
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setPositiveButton(R.string.sure, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                //弹出到设置界面
+                                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                activity.startActivity(intent);
+                            }
+                        })
+                        .create().show();
+            }
+        }
     }
 
 
@@ -77,7 +129,7 @@ public class AppUtils {
      * 强制帮用户打开GPS
      * @param context 上帝对象
      */
-    public static void openGPS(Context context) {
+    /*public static void openGPS(Context context) {
         Intent GPSIntent = new Intent();
         GPSIntent.setClassName("com.android.settings",
                 "com.android.settings.widget.SettingsAppWidgetProvider");
@@ -88,7 +140,7 @@ public class AppUtils {
         } catch (PendingIntent.CanceledException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     /**
      * 获取应用程序名称
@@ -281,6 +333,44 @@ public class AppUtils {
     }
 
     /**
+     * 不变和基本不重复的UUID方法
+     * @return
+     */
+    @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
+    public static String getUUID() {
+        String serial = null;
+        String m_szDevIDShort = "35" +
+                Build.BOARD.length() % 10 + Build.BRAND.length() % 10 +
+
+                Build.CPU_ABI.length() % 10 + Build.DEVICE.length() % 10 +
+
+                Build.DISPLAY.length() % 10 + Build.HOST.length() % 10 +
+
+                Build.ID.length() % 10 + Build.MANUFACTURER.length() % 10 +
+
+                Build.MODEL.length() % 10 + Build.PRODUCT.length() % 10 +
+
+                Build.TAGS.length() % 10 + Build.TYPE.length() % 10 +
+
+                Build.USER.length() % 10; //13 位
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                serial = android.os.Build.getSerial();
+            } else {
+                serial = Build.SERIAL;
+            }
+            //API>=9 使用serial号
+            return new UUID(m_szDevIDShort.hashCode(), serial.hashCode()).toString();
+        } catch (Exception exception) {
+            //serial需要一个初始化
+            serial = "serial"; // 随便一个初始化
+        }
+        //使用硬件信息拼凑出来的15位号码
+        return new UUID(m_szDevIDShort.hashCode(), serial.hashCode()).toString();
+    }
+
+    /**
      * 获取手机型号
      *
      * @return  手机型号
@@ -314,9 +404,9 @@ public class AppUtils {
      */
     public static String getAppMetaData(Context context, String key) {
         if (context == null || TextUtils.isEmpty(key)) {
-            return null;
+            return "";
         }
-        String channelNumber = null;
+        String channelNumber = "";
         try {
             PackageManager packageManager = context.getPackageManager();
             if (packageManager != null) {

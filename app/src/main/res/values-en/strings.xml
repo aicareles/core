@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Components Demo</string>
+    <string name="btn_sure">OK</string>
+    <string name="btn_cancel">Cancel</string>
+</resources>

@@ -3,6 +3,9 @@ package com.heaton.baselib.utils;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.heaton.baselib.callback.RxCallBack;
+import com.heaton.baselib.callback.RxCallBackUI;
+
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -18,12 +21,13 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class RxThreadUtils {
     private static final Handler MAIN_HANDLER       = new Handler(Looper.getMainLooper());
-    public static <T> void asyncThread(final RxCallBack<T> rxCallBack) {
+
+    public static <T> void asyncThreadCallback(final RxCallBackUI<T> rxCallBackUI) {
         Observable.create(new ObservableOnSubscribe<T>() {
             @Override
             public void subscribe(ObservableEmitter<T> emitter) throws Exception {
                 //onNext中的参数不能为null，否则onNext接收不到
-                emitter.onNext(rxCallBack.doSomeThing());
+                emitter.onNext(rxCallBackUI.execute());
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<T>() {
             @Override
@@ -33,7 +37,7 @@ public class RxThreadUtils {
 
             @Override
             public void onNext(T t) {
-                rxCallBack.callBackUI(t);
+                rxCallBackUI.callBackUI(t);
             }
 
             @Override
@@ -48,6 +52,25 @@ public class RxThreadUtils {
         });
     }
 
+    public static void asyncThread(final RxCallBack callBack){
+        TaskExecutor.executeTask(new Runnable() {
+            @Override
+            public void run() {
+                callBack.execute();
+            }
+        });
+    }
+
+    public static void asyncThreadDelay(final long delay, final RxCallBack callBack){
+        TaskExecutor.executeTask(new Runnable() {
+            @Override
+            public void run() {
+                delay(delay);
+                callBack.execute();
+            }
+        });
+    }
+
     public static void runOnUiThread(final Runnable runnable) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             runnable.run();
@@ -56,7 +79,15 @@ public class RxThreadUtils {
         }
     }
 
-    public static void runOnUiThreadDelayed(final Runnable runnable, long delayMillis) {
+    public static void runOnUiThreadDelay(final Runnable runnable, long delayMillis) {
         MAIN_HANDLER.postDelayed(runnable, delayMillis);
+    }
+
+    public static void delay(long delay){
+        try {
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

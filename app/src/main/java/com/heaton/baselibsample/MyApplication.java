@@ -2,10 +2,11 @@ package com.heaton.baselibsample;
 
 import android.app.Application;
 
-import com.heaton.baselib.BaseLibApi;
-import com.heaton.baselib.Options;
+import com.heaton.baselib.BaseCoreAPI;
+import com.heaton.baselib.Configuration;
+import com.heaton.baselib.app.language.Language;
 
-import cn.com.superLei.aoparms.AopArms;
+import java.util.Locale;
 
 
 /**
@@ -41,7 +42,13 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mApplication = this;
-        BaseLibApi.init(this, new Options(true));
+        Language language = new Language(Language.MODE.AUTO, Locale.ENGLISH);
+        Configuration configuration = new Configuration
+                .Builder()
+                .loggable(true)
+                .language(language)
+                .build();
+        BaseCoreAPI.init(this, configuration);
 //        AopArms.init(this);
 
     }

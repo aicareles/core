@@ -28,7 +28,6 @@ public class CheckableLayout extends RelativeLayout implements Checkable {
 
     @Override
     public void setChecked(boolean b) {
-
         if (b != mChecked){
             mChecked = b;
             refreshDrawableState();
@@ -42,7 +41,6 @@ public class CheckableLayout extends RelativeLayout implements Checkable {
 
     @Override
     public void toggle() {
-
         setChecked(!mChecked);
     }
 

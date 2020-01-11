@@ -6,14 +6,16 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Build;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
+import android.util.Log;
 
-import com.heaton.musiclib.player.MediaPlayer;
+import com.heaton.musiclib.player.MediaPlayerCompat;
 import com.heaton.musiclib.player.PlayerHelper;
+import com.heaton.musiclib.player.callback.OnDataCaptureListener;
 import com.heaton.musiclib.player.callback.RecordDataCallBack;
 import com.heaton.musiclib.player.callback.MusicScanCallback;
 import com.heaton.musiclib.player.ScanThread;
@@ -27,6 +29,7 @@ import com.heaton.musiclib.vo.MusicVO;
 import com.j256.ormlite.dao.Dao;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -51,6 +54,7 @@ public class MusicManager {
     private Intent mServiceIntent;
     private MusicPlayer mMusicPlayer;
     private boolean isPlaying = false;
+    private boolean isMusicRhythming = false;
     private SoundRecordHelper mSoundRecordHelper;
 
     @SuppressLint("HandlerLeak")
@@ -95,6 +99,10 @@ public class MusicManager {
 //            context.startService(mServiceIntent);
 //        }
         context.bindService(mServiceIntent, mServiceConnection, Service.BIND_AUTO_CREATE);
+    }
+
+    public void setMediaPlayerType(MediaPlayerCompat.PlayerType type){
+        getMediaPlayer().setMediaPlayerType(type);
     }
 
     /**
@@ -178,8 +186,8 @@ public class MusicManager {
         return mContext;
     }
 
-    public MediaPlayer getMediaPlayer(){
-        return PlayerHelper.getMyMedia();
+    public MediaPlayerCompat getMediaPlayer(){
+        return PlayerHelper.getPlayer();
     }
 
     public DatabaseHelper getDatabaseHelper(){
@@ -266,8 +274,22 @@ public class MusicManager {
      * 音乐播放律动数据回调
      * @param onDataCaptureListener
      */
-    public void setDataCaptureCallBack(MediaPlayer.OnDataCaptureListener onDataCaptureListener){
+    public void setDataCaptureCallback(OnDataCaptureListener onDataCaptureListener){
         getMediaPlayer().setDataCaptureListener(onDataCaptureListener);
+    }
+
+    public void stopRhythm(){
+        isMusicRhythming = false;
+        getMediaPlayer().stopVisualizer();
+    }
+
+    public void startRhythm(){
+        isMusicRhythming = true;
+        getMediaPlayer().startVisualizer();
+    }
+
+    public boolean isMusicRhythming(){
+        return isMusicRhythming;
     }
 
     /**

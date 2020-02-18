@@ -5,19 +5,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 
 import com.heaton.baselib.app.cache.ACache;
 import com.heaton.baselib.base.BaseFragment;
-import com.heaton.baselib.callback.RxCallBack;
+import com.heaton.baselib.callback.CallBack;
 import com.heaton.baselib.crash.RCrashHandler;
 import com.heaton.baselib.manager.UpdateManager;
 import com.heaton.baselib.manager.UploadManager;
 import com.heaton.baselib.utils.DialogUtils;
 import com.heaton.baselib.utils.LogUtils;
-import com.heaton.baselib.utils.RxThreadUtils;
+import com.heaton.baselib.utils.ThreadUtils;
 import com.heaton.baselib.utils.SPUtils;
 import com.heaton.baselibsample.R;
 import com.heaton.baselibsample.bean.Article;
@@ -167,7 +166,7 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void asynDelay() {
-        RxThreadUtils.asyncThreadDelay(3000, new RxCallBack() {
+        ThreadUtils.asyncDelay(3000, new CallBack() {
             @Override
             public void execute() {
                 Log.e(TAG, "asynDelay:"+Thread.currentThread().getName());

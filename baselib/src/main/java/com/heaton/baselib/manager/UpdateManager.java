@@ -255,10 +255,10 @@ public class UpdateManager {
             if (mDownloadDialog == null) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                 builder.setCancelable(false);
-                builder.setTitle("应用更新");
+                builder.setTitle(R.string.update_title);
                 builder.setView(R.layout.update_layout);
                 mDownloadDialog = builder.create();
-                builder.setNegativeButton(R.string.update_title, new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();

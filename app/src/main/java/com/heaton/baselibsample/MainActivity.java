@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.heaton.baselib.base.BaseActivity;
 import com.heaton.baselib.utils.LogUtils;
@@ -28,7 +30,6 @@ public class MainActivity extends BaseActivity {
             setTheme(R.style.main_theme_light);
         }
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -38,14 +39,9 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void bindData() {
-        LogUtils.loge(TAG+"getSupportFragmentManager:"+getSupportFragmentManager().hashCode());
-        LogUtils.logi(TAG+": >>>>>bindData");
-        setTitle(R.string.btn_sure);
-//        FragmentHold.showFragment(getSupportFragmentManager(), HomeFragment.newInstance());
         navigationBar.addTab(HomeFragment.class, new NavigationBar.TabParam(R.mipmap.ic_launcher, R.mipmap.ic_launcher, "0"));
         navigationBar.addTab(MusicFragment.class, new NavigationBar.TabParam(R.mipmap.ic_launcher, R.mipmap.ic_launcher, "1"));
         navigationBar.addTab(SettingFragment.class, new NavigationBar.TabParam(R.mipmap.ic_launcher, R.mipmap.ic_launcher, "2"));
-
     }
 
     @Override
@@ -63,8 +59,6 @@ public class MainActivity extends BaseActivity {
         home();
     }
 
-
-
     private void home() {
         //实现Home键效果
         Intent i= new Intent(Intent.ACTION_MAIN);
@@ -78,5 +72,4 @@ public class MainActivity extends BaseActivity {
         int mode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         return mode == Configuration.UI_MODE_NIGHT_YES;
     }
-
 }

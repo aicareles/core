@@ -8,7 +8,7 @@
     android:background="?attr/main_bg_color"
     android:configChanges="uiMode">
 
-    <include layout="@layout/toolbar_layout"/>
+    <include layout="@layout/toolbar_layout" />
 
     <FrameLayout
         android:id="@+id/main_container"
@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@android:color/white"
+        android:background="?attr/main_bg_color"
         app:containerId="@+id/main_container"
         app:tabItemLayout="@layout/nav_tabview"
         app:navigateTabSelectedTextColor="?attr/main_text_color"

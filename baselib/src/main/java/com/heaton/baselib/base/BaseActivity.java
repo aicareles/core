@@ -126,11 +126,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void bindListener(){}
 
-    @Override
+    /*@Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         setHideBottomUIMenu();
-    }
+    }*/
 
     @Override
     protected void onDestroy() {

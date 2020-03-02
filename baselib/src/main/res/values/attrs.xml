@@ -27,6 +27,7 @@
     <!--图片 点击后变灰效果-->
     <declare-styleable name="ClickableImageView">
         <attr name="pressed_alpha" format="float" />
+        <attr name="pressed_color" format="reference|color" />
     </declare-styleable>
 
     <!--时间滚轮-->

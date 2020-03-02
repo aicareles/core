@@ -30,6 +30,10 @@ public class SelectorButton extends AppCompatButton {
      */
     public SelectorButton(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setMinWidth(0);
+        setMinHeight(0);
+        setMinimumWidth(0);
+        setMinimumHeight(0);
         StateListDrawable seletor = new StateListDrawable();// 背景选择器
         Drawable n = null;
         Drawable p = null;

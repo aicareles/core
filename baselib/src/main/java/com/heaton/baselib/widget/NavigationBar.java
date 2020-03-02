@@ -117,9 +117,9 @@ public class NavigationBar extends LinearLayout implements View.OnClickListener 
             holder.tabTitle.setTextColor(mNormalTextColor);
         }
 
-        if (tabParam.backgroundColor > 0) {
+        /*if (tabParam.backgroundColor > 0) {
             view.setBackgroundResource(tabParam.backgroundColor);
-        }
+        }*/
 
         if (tabParam.iconResId > 0) {
             holder.tabIcon.setImageResource(tabParam.iconResId);
@@ -314,7 +314,7 @@ public class NavigationBar extends LinearLayout implements View.OnClickListener 
 
 
     public static class TabParam {
-        public int backgroundColor = android.R.color.white;
+//        public int backgroundColor = android.R.color.white;
         public int iconResId;
         public int iconSelectedResId;
         public int titleStringRes;
@@ -334,14 +334,14 @@ public class NavigationBar extends LinearLayout implements View.OnClickListener 
         }
 
         public TabParam(int backgroundColor, int iconResId, int iconSelectedResId, int titleStringRes) {
-            this.backgroundColor = backgroundColor;
+//            this.backgroundColor = backgroundColor;
             this.iconResId = iconResId;
             this.iconSelectedResId = iconSelectedResId;
             this.titleStringRes = titleStringRes;
         }
 
         public TabParam(int backgroundColor, int iconResId, int iconSelectedResId, String title) {
-            this.backgroundColor = backgroundColor;
+//            this.backgroundColor = backgroundColor;
             this.iconResId = iconResId;
             this.iconSelectedResId = iconSelectedResId;
             this.title = title;

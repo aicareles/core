@@ -12,20 +12,20 @@ public abstract class BaseFrameLayout extends FrameLayout {
 
     public BaseFrameLayout(@NonNull Context context) {
         super(context);
-        bindLayout(context, null, 0);
+        inflate(context);
     }
 
     public BaseFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        bindLayout(context, attrs, 0);
+        inflate(context);
     }
 
     public BaseFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        bindLayout(context, attrs, defStyleAttr);
+        inflate(context);
     }
 
-    protected void bindLayout(Context context, AttributeSet attrs, int defStyleAttr){
+    protected void inflate(Context context){
         LayoutInflater.from(context).inflate(layoutId(), this, true);
         bindData();
         bindListener();
@@ -36,6 +36,12 @@ public abstract class BaseFrameLayout extends FrameLayout {
     protected abstract void bindData();
 
     protected void bindListener(){}
+
+    public void onResume(){}
+
+    public void onPause(){}
+
+    public void onDestroy(){}
 
 
 }

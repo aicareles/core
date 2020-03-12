@@ -1,11 +1,21 @@
 package com.heaton.baselibsample.navigation;
 
-import com.heaton.baselib.base.BaseActivity;
 import com.heaton.baselib.app.Navigation;
+import com.heaton.baselib.base.BaseNavActivity;
 import com.heaton.baselibsample.R;
 import com.heaton.baselibsample.fragment.Fragment1;
 
-public class NavigationActivity extends BaseActivity {
+public class NavigationActivity extends BaseNavActivity {
+
+    @Override
+    protected boolean addToBackStack() {
+        return true;
+    }
+
+    @Override
+    protected Navigation.MODE mode() {
+        return Navigation.MODE.REPLACE;
+    }
 
     @Override
     protected int layoutId() {
@@ -14,14 +24,12 @@ public class NavigationActivity extends BaseActivity {
 
     @Override
     protected void bindData() {
-        Navigation.of().init(this, R.id.navigation_container);
-        Navigation.of().navigate(Fragment1.newInstance());
+        Navigation.get().navigate(Fragment1.newInstance());
     }
 
     @Override
-    public void onBackPressed() {
-        if (!Navigation.of().pop()){
-            finish();
-        }
+    protected int containerViewId() {
+        return R.id.navigation_container;
     }
+
 }

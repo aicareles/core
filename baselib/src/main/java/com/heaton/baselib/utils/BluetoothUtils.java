@@ -18,7 +18,6 @@ public class BluetoothUtils {
         return false;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static boolean isSupportAdvertiser(){
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)return false;
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();

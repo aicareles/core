@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.heaton.baselib.manager.UploadManager;
 import com.heaton.baselib.utils.FileUtils;
+import com.heaton.baselib.utils.LogUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -75,24 +76,19 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
     //用于格式化日期,作为日志文件名的一部分
     private DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
-    private static String mDirPath;
+    private static File mDirFile;
     private String mExceptionInfos;
     //上传文件具体实现
     private CrashUploader mCrashUploader;
+    public static final String CRASH_LOG_NAME = "crash_log.txt";
 
-    private RCrashHandler(String dirPath) {
-        mDirPath = dirPath;
-        File mDirectory = new File(mDirPath);
-        if (!mDirectory.exists()) {
-            mDirectory.mkdirs();
-        }
-    }
+    private RCrashHandler() {}
 
-    public static RCrashHandler getInstance(String dirPath) {
+    public static RCrashHandler getInstance() {
         if (INSTANCE == null) {
             synchronized (RCrashHandler.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new RCrashHandler(dirPath);
+                    INSTANCE = new RCrashHandler();
                 }
             }
         }
@@ -108,12 +104,14 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
     public void init(Context context, CrashUploader crashUploader) {
         mCrashUploader = crashUploader;
         mContext = context;
+        mDirFile = FileUtils.getFilePath(mContext, "log");
+        LogUtils.logi("RCrashHandler>>>[RCrashHandler]: "+mDirFile);
         //保存一份系统默认的CrashHandler
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         //使用我们自定义的异常处理器替换程序默认的
         Thread.setDefaultUncaughtExceptionHandler(this);
         //读取上次崩溃日志
-        File file = new File(mDirPath, "CrashLog.txt");
+        File file = new File(mDirFile, CRASH_LOG_NAME);
         if (file.exists()){
             //上传上次的错误信息
             UploadManager.uploadCrashInfo(context, file);
@@ -217,33 +215,24 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
     /**
      * 将崩溃日志信息写入本地文件
      */
-    private String saveCrashInfo2File() {
+    private void saveCrashInfo2File() {
         StringBuffer mStringBuffer = new StringBuffer();
+        /*for (int i = 0; i < infos.size(); i++) {
+            mStringBuffer.append(infos.values());;
+        }*/
         mStringBuffer.append(mExceptionInfos);
         // 保存文件，设置文件名
-        String mTime = formatter.format(new Date());
-//        String mFileName = "CrashLog-" + mTime + ".txt";
-        String mFileName = "CrashLog" + ".txt";
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            try {
-                File mDirectory = new File(mDirPath);
-                Log.v(TAG, mDirectory.toString());
-                if (!mDirectory.exists()) {
-                    mDirectory.mkdirs();
-                } else {
-                    FileUtils.deleteDir(mDirectory);
-                }
-                FileOutputStream mFileOutputStream = new FileOutputStream(mDirectory + File.separator + mFileName);
-                mFileOutputStream.write(mStringBuffer.toString().getBytes());
-                mFileOutputStream.close();
-                return mFileName;
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        File file = new File(mDirFile, CRASH_LOG_NAME);
+        try {
+            LogUtils.logi("RCrashHandler>>>[saveCrashInfo2File]: "+file);
+            FileOutputStream mFileOutputStream = new FileOutputStream(file);
+            mFileOutputStream.write(mStringBuffer.toString().getBytes());
+            mFileOutputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return null;
     }
 
     /**
@@ -253,10 +242,8 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
         mCrashUploader.uploadCrashMessage(infos);
     }
 
-
     /**
      * 获取捕获异常的信息
-     *
      * @param ex
      */
     private String collectExceptionInfos(Throwable ex) {

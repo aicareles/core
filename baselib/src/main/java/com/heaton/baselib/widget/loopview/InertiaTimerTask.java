@@ -4,7 +4,7 @@
 
 package com.heaton.baselib.widget.loopview;
 
-// Referenced classes of package com.qingchifan.view:
+// Referenced classes get package com.qingchifan.view:
 //            LoopView
 
 final class InertiaTimerTask implements Runnable {

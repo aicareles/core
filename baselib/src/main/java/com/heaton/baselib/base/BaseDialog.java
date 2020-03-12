@@ -22,6 +22,7 @@ import android.widget.Toast;
  */
 
 public abstract class BaseDialog extends Dialog {
+    protected final String TAG = this.getClass().getSimpleName();
 
     public Activity mActivity;
 

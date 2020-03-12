@@ -10,6 +10,8 @@ import android.widget.FrameLayout;
 
 public abstract class BaseFrameLayout extends FrameLayout {
 
+    protected final String TAG = this.getClass().getSimpleName();
+
     public BaseFrameLayout(@NonNull Context context) {
         super(context);
         inflate(context);

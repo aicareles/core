@@ -17,23 +17,23 @@ public class Navigation {
     private static final String TAG = "Navigation";
     private static Navigation navigation;
     private List<Fragment> fragments = new ArrayList<>();
-    public MODE mode = MODE.REPLACE;
-    public boolean addToBackStack;
+    public MODE mode, initMode = MODE.REPLACE;
+    public boolean addToBackStack, initAddToBackStack = true;
     public FragmentManager fragmentManager;
     public int containerViewId;
 
     public void init(FragmentActivity activity, int containerViewId){
-        init(activity, containerViewId, true, MODE.REPLACE);
+        init(activity, containerViewId, addToBackStack, MODE.REPLACE);
     }
 
     public void init(FragmentActivity activity, int containerViewId, boolean addToBackStack, MODE mode){
         this.fragmentManager = activity.getSupportFragmentManager();
         this.containerViewId = containerViewId;
-        this.addToBackStack = addToBackStack;
-        this.mode = mode;
+        this.addToBackStack = initAddToBackStack = addToBackStack;
+        this.mode = initMode = mode;
     }
 
-    public static Navigation of() {
+    public static Navigation get() {
         if (navigation == null){
             navigation = new Navigation();
         }
@@ -46,6 +46,7 @@ public class Navigation {
         }else {
             show(fragment);
         }
+        reset();
     }
 
     //栈中是否还有fragment
@@ -94,6 +95,12 @@ public class Navigation {
             transaction.addToBackStack(null);
         }
         transaction.commitAllowingStateLoss();
+    }
+
+    //重置初始配置的值(以免每次执行navigate都要设置模式等,默认为初始配置的模式)
+    void reset(){
+        addToBackStack = initAddToBackStack;
+        mode = initMode;
     }
 
     public Navigation mode(MODE mode) {

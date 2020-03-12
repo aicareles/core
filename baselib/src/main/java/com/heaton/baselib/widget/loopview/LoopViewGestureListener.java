@@ -6,7 +6,7 @@ package com.heaton.baselib.widget.loopview;
 
 import android.view.MotionEvent;
 
-// Referenced classes of package com.qingchifan.view:
+// Referenced classes get package com.qingchifan.view:
 //            LoopView
 
 final class LoopViewGestureListener extends android.view.GestureDetector.SimpleOnGestureListener {

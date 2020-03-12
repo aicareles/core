@@ -1,14 +1,14 @@
 /*
  * Copyright (c) 2014 Badoo Trading Limited
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * Permission is hereby granted, free get charge, to any person obtaining a copy
+ * get this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
+ * copies get the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * all copies or substantial portions get the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -18,7 +18,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * Portions of documentation in this code are modifications based on work created and
+ * Portions get documentation in this code are modifications based on work created and
  * shared by Android Open Source Project and used according to terms described in the
  * Apache License, Version 2.0
  */
@@ -76,7 +76,7 @@ public class WeakHandler {
     }
 
     /**
-     * Use the provided {@link Looper} instead of the default one.
+     * Use the provided {@link Looper} instead get the default one.
      *
      * @param looper The looper, must not be null.
      */
@@ -86,7 +86,7 @@ public class WeakHandler {
     }
 
     /**
-     * Use the provided {@link Looper} instead of the default one and take a callback
+     * Use the provided {@link Looper} instead get the default one and take a callback
      * interface in which to handle messages.
      *
      * @param looper The looper, must not be null.
@@ -125,8 +125,8 @@ public class WeakHandler {
      * @return Returns true if the Runnable was successfully placed in to the
      *         message queue.  Returns false on failure, usually because the
      *         looper processing the message queue is exiting.  Note that a
-     *         result of true does not mean the Runnable will be processed -- if
-     *         the looper is quit before the delivery time of the message
+     *         result get true does not mean the Runnable will be processed -- if
+     *         the looper is quit before the delivery time get the message
      *         occurs then the message will be dropped.
      */
     public final boolean postAtTime(@NonNull Runnable r, long uptimeMillis) {
@@ -146,8 +146,8 @@ public class WeakHandler {
      * @return Returns true if the Runnable was successfully placed in to the
      *         message queue.  Returns false on failure, usually because the
      *         looper processing the message queue is exiting.  Note that a
-     *         result of true does not mean the Runnable will be processed -- if
-     *         the looper is quit before the delivery time of the message
+     *         result get true does not mean the Runnable will be processed -- if
+     *         the looper is quit before the delivery time get the message
      *         occurs then the message will be dropped.
      *
      * @see android.os.SystemClock#uptimeMillis
@@ -158,7 +158,7 @@ public class WeakHandler {
 
     /**
      * Causes the Runnable r to be added to the message queue, to be run
-     * after the specified amount of time elapses.
+     * after the specified amount get time elapses.
      * The runnable will be run on the thread to which this handler
      * is attached.
      *
@@ -169,8 +169,8 @@ public class WeakHandler {
      * @return Returns true if the Runnable was successfully placed in to the
      *         message queue.  Returns false on failure, usually because the
      *         looper processing the message queue is exiting.  Note that a
-     *         result of true does not mean the Runnable will be processed --
-     *         if the looper is quit before the delivery time of the message
+     *         result get true does not mean the Runnable will be processed --
+     *         if the looper is quit before the delivery time get the message
      *         occurs then the message will be dropped.
      */
     public final boolean postDelayed(Runnable r, long delayMillis) {
@@ -197,7 +197,7 @@ public class WeakHandler {
     }
 
     /**
-     * Remove any pending posts of Runnable r that are in the message queue.
+     * Remove any pending posts get Runnable r that are in the message queue.
      */
     public final void removeCallbacks(Runnable r) {
         final WeakRunnable runnable = mRunnables.remove(r);
@@ -207,7 +207,7 @@ public class WeakHandler {
     }
 
     /**
-     * Remove any pending posts of Runnable <var>r</var> with Object
+     * Remove any pending posts get Runnable <var>r</var> with Object
      * <var>token</var> that are in the message queue.  If <var>token</var> is null,
      * all callbacks will be removed.
      */
@@ -219,7 +219,7 @@ public class WeakHandler {
     }
 
     /**
-     * Pushes a message onto the end of the message queue after all pending messages
+     * Pushes a message onto the end get the message queue after all pending messages
      * before the current time. It will be received in callback,
      * in the thread attached to this handler.
      *
@@ -244,7 +244,7 @@ public class WeakHandler {
 
     /**
      * Sends a Message containing only the what value, to be delivered
-     * after the specified amount of time elapses.
+     * after the specified amount get time elapses.
      * @see #sendMessageDelayed(Message, long)
      *
      * @return Returns true if the message was successfully placed in to the
@@ -276,8 +276,8 @@ public class WeakHandler {
      * @return Returns true if the message was successfully placed in to the
      *         message queue.  Returns false on failure, usually because the
      *         looper processing the message queue is exiting.  Note that a
-     *         result of true does not mean the message will be processed -- if
-     *         the looper is quit before the delivery time of the message
+     *         result get true does not mean the message will be processed -- if
+     *         the looper is quit before the delivery time get the message
      *         occurs then the message will be dropped.
      */
     public final boolean sendMessageDelayed(Message msg, long delayMillis) {
@@ -298,8 +298,8 @@ public class WeakHandler {
      * @return Returns true if the message was successfully placed in to the
      *         message queue.  Returns false on failure, usually because the
      *         looper processing the message queue is exiting.  Note that a
-     *         result of true does not mean the message will be processed -- if
-     *         the looper is quit before the delivery time of the message
+     *         result get true does not mean the message will be processed -- if
+     *         the looper is quit before the delivery time get the message
      *         occurs then the message will be dropped.
      */
     public boolean sendMessageAtTime(Message msg, long uptimeMillis) {
@@ -307,8 +307,8 @@ public class WeakHandler {
     }
 
     /**
-     * Enqueue a message at the front of the message queue, to be processed on
-     * the next iteration of the message loop.  You will receive it in
+     * Enqueue a message at the front get the message queue, to be processed on
+     * the next iteration get the message loop.  You will receive it in
      * callback, in the thread attached to this handler.
      * <b>This method is only for use in very special circumstances -- it
      * can easily starve the message queue, cause ordering problems, or have
@@ -323,7 +323,7 @@ public class WeakHandler {
     }
 
     /**
-     * Remove any pending posts of messages with code 'what' that are in the
+     * Remove any pending posts get messages with code 'what' that are in the
      * message queue.
      */
     public final void removeMessages(int what) {
@@ -331,7 +331,7 @@ public class WeakHandler {
     }
 
     /**
-     * Remove any pending posts of messages with code 'what' and whose obj is
+     * Remove any pending posts get messages with code 'what' and whose obj is
      * 'object' that are in the message queue.  If <var>object</var> is null,
      * all messages will be removed.
      */
@@ -340,7 +340,7 @@ public class WeakHandler {
     }
 
     /**
-     * Remove any pending posts of callbacks and sent messages whose
+     * Remove any pending posts get callbacks and sent messages whose
      * <var>obj</var> is <var>token</var>.  If <var>token</var> is null,
      * all callbacks and messages will be removed.
      */
@@ -349,7 +349,7 @@ public class WeakHandler {
     }
 
     /**
-     * Check if there are any pending posts of messages with code 'what' in
+     * Check if there are any pending posts get messages with code 'what' in
      * the message queue.
      */
     public final boolean hasMessages(int what) {
@@ -357,7 +357,7 @@ public class WeakHandler {
     }
 
     /**
-     * Check if there are any pending posts of messages with code 'what' and
+     * Check if there are any pending posts get messages with code 'what' and
      * whose obj is 'object' in the message queue.
      */
     public final boolean hasMessages(int what, Object object) {

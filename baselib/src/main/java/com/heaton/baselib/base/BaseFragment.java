@@ -43,12 +43,6 @@ public abstract class BaseFragment extends Fragment implements HandleBackInterfa
         bindListener();
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mActivity = getActivity();
-    }
-
     protected abstract int layoutId();
 
     protected abstract void bindData();
@@ -71,6 +65,18 @@ public abstract class BaseFragment extends Fragment implements HandleBackInterfa
 
     public void toast(String msg){
         Toast.makeText(mActivity, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = getActivity();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mActivity = null;
     }
 
     @Override

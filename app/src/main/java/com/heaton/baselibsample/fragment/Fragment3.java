@@ -1,7 +1,6 @@
 package com.heaton.baselibsample.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.heaton.baselib.app.Navigation;
@@ -37,22 +36,10 @@ public class Fragment3 extends BaseFragment {
         tvText.setText("fragment3");
     }
 
-    @Override
-    protected void bindListener() {
-
-    }
-
     @OnClick(R.id.tvText)
     public void onClickView(){
-//        FragmentHold.showFragment(getFragmentManager(), Fragment1.newInstance());
-        Navigation.of().navigate(Fragment4.newInstance());
+        Navigation.get().navigate(Fragment4.newInstance());
     }
-
-   /* @Override
-    public boolean onBackPressed() {
-        FragmentHold.showFragment(getFragmentManager(), HomeFragment.newInstance());
-        return true;
-    }*/
 
     @Override
     public void onDestroy() {

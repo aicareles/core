@@ -28,6 +28,7 @@ import com.heaton.baselib.R;
 import com.heaton.baselib.Constance;
 import com.heaton.baselib.utils.AppUtils;
 import com.heaton.baselib.bean.UpdateVO;
+import com.heaton.baselib.utils.FileUtils;
 import com.heaton.baselib.utils.LogUtils;
 
 import java.io.File;
@@ -233,16 +234,17 @@ public class UpdateManager {
             Toast.makeText(mContext, mContext.getString(R.string.download_url_error), Toast.LENGTH_LONG).show();
             return;
         }
-        File path = Environment.getExternalStorageDirectory();
-        File dirPath = new File(path, "download");
-
+        //解决android10.0  安装包文件放到/storage/emulated/0/Android/data/包名/files文件夹下,不需要动态授权
+        /*File path = Environment.getExternalStorageDirectory();
+        File dirPath = new File(path, "download");*/
+        File dirPath = FileUtils.getFilePath(mContext, "download");
+        LogUtils.logi("UpdateManager>>>[downloadFile]: "+dirPath);
         if (!dirPath.exists()) {
             if (dirPath.mkdir()) {
                 Toast.makeText(mContext, "没有权限", Toast.LENGTH_LONG).show();
                 return;
             }
         }
-
         String fileName = downloadUrl.substring(downloadUrl.lastIndexOf("/"));
         File saveFile = new File(dirPath, fileName);
 
@@ -282,8 +284,6 @@ public class UpdateManager {
             mShowDialog = showDialog;
             saveFile = new File(dirPath, fileName + ".tmp");
             downloadApk(saveFile, downloadUrl);
-
-
         } catch (Exception e) {
             if (BuildConfig.DEBUG) {
                 e.printStackTrace();

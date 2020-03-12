@@ -36,17 +36,6 @@ public class Fragment4 extends BaseFragment {
     }
 
     @Override
-    protected void bindListener() {
-
-    }
-
-   /* @Override
-    public boolean onBackPressed() {
-        FragmentHold.showFragment(getFragmentManager(), HomeFragment.newInstance());
-        return true;
-    }*/
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "onDestroy: >>>>");

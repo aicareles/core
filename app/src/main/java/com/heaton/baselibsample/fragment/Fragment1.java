@@ -36,14 +36,11 @@ public class Fragment1 extends BaseFragment {
         tvText.setText("fragment1");
     }
 
-    @Override
-    protected void bindListener() {
-
-    }
-
     @OnClick(R.id.tvText)
     public void onClickView(){
-        Navigation.of().navigate(Fragment2.newInstance());
+        //fragment2不加入回退栈(直接替换fragment1)----->此时fragment2为activity的最底部的fragment
+//        Navigation.get().addToBackStack(false).navigate(Fragment2.newInstance());
+        Navigation.get().navigate(Fragment2.newInstance());
     }
 
     @Override
@@ -52,9 +49,4 @@ public class Fragment1 extends BaseFragment {
         LogUtils.logi(TAG+"onDestroy");
     }
 
-    /*@Override
-    public boolean onBackPressed() {
-        FragmentHold.showFragment(getFragmentManager(), HomeFragment.newInstance());
-        return true;
-    }*/
 }

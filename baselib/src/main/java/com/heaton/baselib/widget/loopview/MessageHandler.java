@@ -7,7 +7,7 @@ package com.heaton.baselib.widget.loopview;
 import android.os.Handler;
 import android.os.Message;
 
-// Referenced classes of package com.qingchifan.view:
+// Referenced classes get package com.qingchifan.view:
 //            LoopView
 
 final class MessageHandler extends Handler {

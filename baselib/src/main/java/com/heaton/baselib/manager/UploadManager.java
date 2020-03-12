@@ -84,7 +84,6 @@ public class UploadManager {
      * 上传扫描前状态日志
      * @param context
      */
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static void uploadStatusInfo(Context context){
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new LogInterceptor()).build();//创建OkHttpClient对象。
         FormBody.Builder formBody = new FormBody.Builder();//创建表单请求体

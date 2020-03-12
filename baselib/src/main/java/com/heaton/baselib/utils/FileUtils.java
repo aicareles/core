@@ -1,5 +1,7 @@
 package com.heaton.baselib.utils;
 
+import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -57,4 +59,41 @@ public class FileUtils {
         }
         return content;
     }
+
+    /**
+     * 获取sd卡的目录
+     * @param context
+     * @param child  如:  download   log
+     * @return  /storage/emulated/0/Android/data/包名/files
+     */
+    public static File getFilePath(Context context, String child){
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+            || !Environment.isExternalStorageRemovable()) {
+            //外部存储可用
+            return context.getExternalFilesDir(child);
+        }else {
+            //外部存储不可用
+            return context.getFilesDir();
+        }
+    }
+
+    /**
+     * 获取sd卡的缓存目录
+     * @param context
+     * @return  /storage/emulated/0/Android/data/包名/cache
+     */
+    public static File getCachePath(Context context){
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                || !Environment.isExternalStorageRemovable()) {
+            //外部存储可用
+            return context.getExternalCacheDir();
+        }else {
+            //外部存储不可用
+            return context.getCacheDir();
+        }
+    }
+
+
+
+
 }

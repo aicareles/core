@@ -62,7 +62,6 @@ public class HomeFragment extends BaseFragment {
         return R.layout.fragment_home;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void bindData() {
         initCrash();
@@ -78,6 +77,7 @@ public class HomeFragment extends BaseFragment {
         initArticle();
 
         initLog();
+
     }
 
     private void initLog() {
@@ -101,12 +101,9 @@ public class HomeFragment extends BaseFragment {
                 "            \"des\": \"一个帮助你快速实现底部导航的自定义控件。\"}");
     }
 
-    @Permission(value = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
-            requestCode = REQUEST_PERMISSION_WRITE)
     private void initCrash() {
         //初始化崩溃日志路径
-        final String crashPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "BaseLibSample/crashLog";
-        RCrashHandler.getInstance(crashPath).init(getContext(), null);
+        RCrashHandler.getInstance().init(getContext(), null);
     }
 
     @Permission(value = {Manifest.permission.CAMERA}, rationale = "为了更好的体验，请打开相机权限", requestCode = REQUEST_PERMISSION_CAMERA)

@@ -19,6 +19,7 @@ import butterknife.Unbinder;
  * created by jerry on 2019/8/7.
  */
 public abstract class BaseDialogFragment extends DialogFragment {
+    protected final String TAG = this.getClass().getSimpleName();
     protected View mRootView;
     private Unbinder mUnBinder;
 

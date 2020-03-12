@@ -29,9 +29,7 @@ import android.widget.Toast;
 
 import com.heaton.baselib.R;
 import com.heaton.baselib.app.language.LanguageManager;
-import com.heaton.baselib.utils.AppUtils;
 import com.heaton.baselib.utils.GlobalStatusBarUtil;
-
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
@@ -126,11 +124,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void bindListener(){}
 
-    /*@Override
+    @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         setHideBottomUIMenu();
-    }*/
+    }
 
     @Override
     protected void onDestroy() {

@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.heaton.baselib.base.BaseActivity;
 import com.heaton.baselib.base.BaseFragment;
 import com.heaton.baselibsample.adapter.LocalMusicAdapter;
 import com.heaton.baselibsample.R;
@@ -32,6 +33,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnItemClick;
+import cn.com.superLei.aoparms.annotation.Permission;
+import cn.com.superLei.aoparms.annotation.PermissionDenied;
+import cn.com.superLei.aoparms.annotation.PermissionNoAskDenied;
+import cn.com.superLei.aoparms.common.permission.AopPermissionUtils;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -39,7 +44,7 @@ import pub.devrel.easypermissions.EasyPermissions;
  * description $desc$
  * created by jerry on 2019/7/25.
  */
-public class MusicFragment extends BaseFragment implements EasyPermissions.PermissionCallbacks {
+public class MusicFragment extends BaseFragment {
     private static final String TAG = "MusicFragment";
     private static final int REQUEST_READ_PERMISSIONS = 1;
     private static final int REQUEST_RECORD_AUDIO_PERMISSIONS = 2;
@@ -89,7 +94,7 @@ public class MusicFragment extends BaseFragment implements EasyPermissions.Permi
         mMusicManager = MusicManager.getInstance();
         mMusicManager.init(getContext());
         //需要audio权限
-        mMusicManager.setMediaPlayerType(MediaPlayerCompat.PlayerType.NATIVE_PLAYER);
+        mMusicManager.setMediaPlayerType(MediaPlayerCompat.PlayerType.CUSTOM_PLAYER);
         requestReadPermissions();
     }
 
@@ -251,64 +256,65 @@ public class MusicFragment extends BaseFragment implements EasyPermissions.Permi
         mMusicManager.destory();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @Override
-    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
-        Log.e(TAG, "onPermissionsGranted: ");
-    }
-
-    @Override
-    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-        Log.e(TAG, "onPermissionsDenied: ");
-    }
-
-    @AfterPermissionGranted(REQUEST_READ_PERMISSIONS)
+//    @Permission(value = {Manifest.permission.READ_EXTERNAL_STORAGE}, rationale = "音乐加载需要读取SD卡权限", requestCode = REQUEST_READ_PERMISSIONS)
     private void requestReadPermissions() {
-        String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE};
-        if (EasyPermissions.hasPermissions(mActivity, perms)) {
-            mMusicManager.startScanMusic(new MusicScanCallback() {
-                @Override
-                public void onMusicScanResult(List<MusicVO> musicList) {
-                    mMusicList.addAll(musicList);
-                    mLocalMusicAdapter.notifyDataSetChanged();
-                    MusicVO musicVO = mLocalMusicAdapter.getItem(0);
-                    if (musicVO != null){
-                        mLocalMusicAdapter.setPlayPosition(0);
-                        mLocalMusicAdapter.notifyDataSetChanged();
-                        tvTitle.setText(musicVO.title);
-                        long l = musicVO.duration;
-                        int musicTime = (int) (l / 1000);
-                        String fen = musicTime / 60 + "";
-                        String miao = musicTime % 60 + "";
-                        if (miao.length() == 1) {
-                            miao = "0" + musicTime % 60;
-                        }
-                        tvSbDuration.setText(fen + ":" + miao);
-                        if (musicVO.artist.equals("<unknown>")) {
-                            tvArtist.setText(R.string.unknown);
-                        } else {
-                            tvArtist.setText(musicVO.artist);
-                        }
-                    }
-                }
-            });
-        } else {
-            EasyPermissions.requestPermissions(this, "音乐加载需要读取SD卡权限", REQUEST_READ_PERMISSIONS, perms);
+        ((BaseActivity)mActivity)
+                .requestPermission(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        "音乐加载需要读取SD卡权限", new BaseActivity.GrantedResult() {
+                            @Override
+                            public void onResult(boolean granted) {
+                                mMusicManager.startScanMusic(new MusicScanCallback() {
+                                    @Override
+                                    public void onMusicScanResult(List<MusicVO> musicList) {
+                                        mMusicList.addAll(musicList);
+                                        mLocalMusicAdapter.notifyDataSetChanged();
+                                        MusicVO musicVO = mLocalMusicAdapter.getItem(0);
+                                        if (musicVO != null){
+                                            mLocalMusicAdapter.setPlayPosition(0);
+                                            mLocalMusicAdapter.notifyDataSetChanged();
+                                            tvTitle.setText(musicVO.title);
+                                            long l = musicVO.duration;
+                                            int musicTime = (int) (l / 1000);
+                                            String fen = musicTime / 60 + "";
+                                            String miao = musicTime % 60 + "";
+                                            if (miao.length() == 1) {
+                                                miao = "0" + musicTime % 60;
+                                            }
+                                            tvSbDuration.setText(fen + ":" + miao);
+                                            if (musicVO.artist.equals("<unknown>")) {
+                                                tvArtist.setText(R.string.unknown);
+                                            } else {
+                                                tvArtist.setText(musicVO.artist);
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        });
+    }
+
+//    @Permission(value = {Manifest.permission.RECORD_AUDIO}, rationale = "获取麦克风数据需要录制权限", requestCode = REQUEST_RECORD_AUDIO_PERMISSIONS)
+    private void requestRecordPermissions(){
+        mMusicManager.startRecord();
+    }
+
+    @PermissionDenied
+    public void permissionDenied(int requestCode, List<String> denyList) {
+        if (requestCode == REQUEST_READ_PERMISSIONS) {
+            Log.e(TAG, "permissionDenied>>>:读取权限被拒 " + denyList.toString());
+        } else if (requestCode == REQUEST_RECORD_AUDIO_PERMISSIONS) {
+            Log.e(TAG, "permissionDenied>>>:麦克风权限被拒 " + denyList.toString());
         }
     }
 
-    @AfterPermissionGranted(REQUEST_RECORD_AUDIO_PERMISSIONS)
-    private void requestRecordPermissions() {
-        String[] perms = {Manifest.permission.RECORD_AUDIO};
-        if (EasyPermissions.hasPermissions(mActivity, perms)) {
-            mMusicManager.startRecord();
-        } else {
-            EasyPermissions.requestPermissions(this, "获取麦克风数据需要录制权限", REQUEST_RECORD_AUDIO_PERMISSIONS, perms);
+    @PermissionNoAskDenied
+    public void permissionNoAskDenied(int requestCode, List<String> denyNoAskList) {
+        if (requestCode == REQUEST_READ_PERMISSIONS) {
+            Log.e(TAG, "permissionNoAskDenied 读取权限被拒,不在提示>>>: " + denyNoAskList.toString());
+        } else if (requestCode == REQUEST_RECORD_AUDIO_PERMISSIONS) {
+            Log.e(TAG, "permissionDenied>>>:麦克风权限被拒,不在提示>>> " + denyNoAskList.toString());
         }
+        AopPermissionUtils.showGoSetting(getActivity(), "为了更好的体验，建议前往设置页面打开权限");
     }
 
 }

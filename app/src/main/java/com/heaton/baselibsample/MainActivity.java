@@ -28,6 +28,7 @@ public class MainActivity extends BaseActivity {
             setTheme(R.style.main_theme_dark);
         }else {
             setTheme(R.style.main_theme_light);
+            LogUtils.logi("MainActivity>>>[onCreate]: "+getDarkModeStatus(this));
         }
         super.onCreate(savedInstanceState);
     }

@@ -70,7 +70,7 @@ public class HomeFragment extends BaseFragment {
         //更新版本
         new UpdateManager(getActivity()).versionUpdate();
         //上传操作信息
-        UploadManager.uploadStatusInfo(getContext());
+//        UploadManager.uploadStatusInfo(getContext());
 
         initData();
 

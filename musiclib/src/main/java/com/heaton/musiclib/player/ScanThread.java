@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -78,9 +79,20 @@ public class ScanThread extends Thread {
                         e.printStackTrace();
                     }
                 }
+
+                /*//Android Q 公有目录只能通过Content Uri + id的方式访问，以前的File路径全部无效，如果是Video，记得换成MediaStore.Videos
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                    int id = cur.getInt(cur.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
+                    url = MediaStore.Audio.Media
+                            .EXTERNAL_CONTENT_URI
+                            .buildUpon()
+                            .appendPath(String.valueOf(id)).build().toString();
+                    Log.i("ScanThread", "Android10.0: url:"+url);
+                }*/
+
                 long duration = cur.getLong(durationIndex);
 //                if (TextUtils.isEmpty(url) || duration < 3000 || !url.endsWith(".mp3") && !url.endsWith(".ogg") || !new File(url).exists()){
-                if (TextUtils.isEmpty(url) || !new File(url).exists()){
+                if (TextUtils.isEmpty(url) || !new File(url).exists() || duration < 3000){
                     continue;
                 }
 

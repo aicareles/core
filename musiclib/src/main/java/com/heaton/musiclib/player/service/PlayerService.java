@@ -263,10 +263,12 @@ public class PlayerService extends Service implements Runnable {
                 MediaPlayerCompat playerCompat = PlayerHelper.getPlayer();
                 if (playerCompat.isNativeMediaPlayer()){
                     //解决第一次  seekTo无效的问题(提前初始化)
-                    try {
-                        playerCompat.play(serviceMusicList.get(servicePosition).url);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    if (!serviceMusicList.isEmpty()){
+                        try {
+                            playerCompat.play(serviceMusicList.get(servicePosition).url);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }

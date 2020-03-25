@@ -136,12 +136,10 @@ public class MusicManager {
                     e.printStackTrace();
                 }
             }
-            if (!mMusicList.isEmpty()){
-                try {
-                    mMusicPlayer.dataChange(mMusicList, 0,  PlayerFinal.MODE_LOOP);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
+            try {
+                mMusicPlayer.dataChange(mMusicList, 0,  PlayerFinal.MODE_LOOP);
+            } catch (RemoteException e) {
+                e.printStackTrace();
             }
         }
     };

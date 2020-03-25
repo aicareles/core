@@ -157,7 +157,7 @@ public class MediaPlayerCompat implements IPlayer {
         }
     }
 
-    public void startVisualizer(){
+    private void startVisualizer(){
         visualizer = new Visualizer(nativeMediaPlayer.getAudioSessionId());
         Log.e(TAG, "AudioSessionId:"+nativeMediaPlayer.getAudioSessionId());
         visualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);//采样 - 参数内必须是2的位数 - 如128,256,512,1024
@@ -188,11 +188,27 @@ public class MediaPlayerCompat implements IPlayer {
         visualizer.setEnabled(true);
     }
 
-    public void stopVisualizer(){
+    private void stopVisualizer(){
         if (visualizer != null){
             visualizer.setEnabled(false);
             visualizer.release();
             visualizer = null;
+        }
+    }
+
+    public void stopRhythm() {
+        if (isNativeMediaPlayer()){
+            stopVisualizer();
+        }else {
+            customMediaPlayer.setRhythming(false);
+        }
+    }
+
+    public void startRhythm() {
+        if (isNativeMediaPlayer()){
+            startVisualizer();
+        }else {
+            customMediaPlayer.setRhythming(true);
         }
     }
 

@@ -43,6 +43,7 @@ public class MediaPlayer implements Runnable {
     private int sourceRawResId = -1;
     private Context mContext;
     private boolean stop = false;
+    private boolean isRhythming = false;
 
     private String mime = null;
     private int sampleRate = 0, channels = 0, bitrate = 0;
@@ -356,7 +357,7 @@ public class MediaPlayer implements Runnable {
                 buf.clear();
                 if (chunk.length > 0) {
                     audioTrack.write(chunk, 0, chunk.length);
-                    if (onDataCaptureListener != null) {
+                    if (onDataCaptureListener != null && isRhythming) {
                         //单通道正常取值   双通道则只取奇数或者偶数位的byte
                         int length = chunk.length;
                         short[] b = new short[length / 4];
@@ -406,6 +407,10 @@ public class MediaPlayer implements Runnable {
         }
 
         release();
+    }
+
+    public void setRhythming(boolean rhythming) {
+        isRhythming = rhythming;
     }
 
     /**

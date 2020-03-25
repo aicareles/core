@@ -163,7 +163,6 @@ public class MusicFragment extends BaseFragment {
 
             @Override
             public void onSeekChange(int progress, int max, String time, String duration) {
-                Log.e(TAG, "onSeekChange: ");
                 if (max <= 0)return;
                 sb.setProgress(progress*100/max);
                 tvSbTime.setText(time);
@@ -295,7 +294,15 @@ public class MusicFragment extends BaseFragment {
 
 //    @Permission(value = {Manifest.permission.RECORD_AUDIO}, rationale = "获取麦克风数据需要录制权限", requestCode = REQUEST_RECORD_AUDIO_PERMISSIONS)
     private void requestRecordPermissions(){
-        mMusicManager.startRecord();
+        ((BaseActivity)mActivity).requestPermission(new String[]{Manifest.permission.RECORD_AUDIO}, "", new BaseActivity.GrantedResult() {
+            @Override
+            public void onResult(boolean granted) {
+                if (granted){
+                    mMusicManager.startRecord();
+                }
+            }
+        });
+
     }
 
     @PermissionDenied

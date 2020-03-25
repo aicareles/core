@@ -28,6 +28,9 @@ public class PlayerHelper {
 
 	public PlayerHelper(PlayerService playerService){
 		mPlayerService = playerService;
+		if (player == null) {
+			player = new MediaPlayerCompat();
+		}
 	}
 
 	/**

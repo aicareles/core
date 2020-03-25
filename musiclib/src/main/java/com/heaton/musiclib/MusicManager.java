@@ -61,9 +61,9 @@ public class MusicManager {
     private class MessageHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case MSG_SCANNED_MUSIC:
-                    if (mMusicScanCallback != null){
+                    if (mMusicScanCallback != null) {
                         mMusicScanCallback.onMusicScanResult(mMusicList);
                     }
                     if (mScanThread != null && mScanThread.isAlive()) {
@@ -85,9 +85,10 @@ public class MusicManager {
 
     /**
      * 务必初始化
+     *
      * @param context
      */
-    public void init(Context context){
+    public void init(Context context) {
         mContext = context;
         mSoundRecordHelper = new SoundRecordHelper();
         //绑定音乐服务
@@ -101,15 +102,15 @@ public class MusicManager {
         context.bindService(mServiceIntent, mServiceConnection, Service.BIND_AUTO_CREATE);
     }
 
-    public void setMediaPlayerType(MediaPlayerCompat.PlayerType type){
+    public void setMediaPlayerType(MediaPlayerCompat.PlayerType type) {
         getMediaPlayer().setMediaPlayerType(type);
     }
 
     /**
      * 退出时销毁
      */
-    public void destory(){
-        if (mServiceConnection != null){
+    public void destory() {
+        if (mServiceConnection != null) {
             mContext.unbindService(mServiceConnection);
             mContext.stopService(mServiceIntent);
         }
@@ -125,7 +126,7 @@ public class MusicManager {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mMusicPlayer = MusicPlayer.Stub.asInterface(service);
-            if (mServiceConnectedCallback != null){
+            if (mServiceConnectedCallback != null) {
                 mServiceConnectedCallback.onServiceConnected();
             }
             try {
@@ -135,10 +136,12 @@ public class MusicManager {
                     e.printStackTrace();
                 }
             }
-            try {
-                mMusicPlayer.dataChange(mMusicList, 0,  PlayerFinal.MODE_LOOP);
-            } catch (RemoteException e) {
-                e.printStackTrace();
+            if (!mMusicList.isEmpty()){
+                try {
+                    mMusicPlayer.dataChange(mMusicList, 0,  PlayerFinal.MODE_LOOP);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
         }
     };
@@ -162,36 +165,36 @@ public class MusicManager {
 
         @Override
         public void onSeekChange(int progress, int max, String time, String duration) throws RemoteException {
-            if (mPlayStateCallback != null){
+            if (mPlayStateCallback != null) {
                 mPlayStateCallback.onSeekChange(progress, max, time, duration);
             }
         }
 
         @Override
         public void onModeChange(int mode) throws RemoteException {
-            if (mPlayStateCallback != null){
+            if (mPlayStateCallback != null) {
                 mPlayStateCallback.onModeChange(mode);
             }
         }
     };
 
-    public boolean isPlaying(){
+    public boolean isPlaying() {
         return isPlaying;
     }
 
-    public Context getContext(){
-        if (mContext == null){
+    public Context getContext() {
+        if (mContext == null) {
             throw new IllegalStateException("please init MusicManager");
         }
         return mContext;
     }
 
-    public MediaPlayerCompat getMediaPlayer(){
+    public MediaPlayerCompat getMediaPlayer() {
         return PlayerHelper.getPlayer();
     }
 
-    public DatabaseHelper getDatabaseHelper(){
-        if (mDatabaseHelper == null){
+    public DatabaseHelper getDatabaseHelper() {
+        if (mDatabaseHelper == null) {
             mDatabaseHelper = new DatabaseHelper(mContext);
         }
         return mDatabaseHelper;
@@ -199,9 +202,10 @@ public class MusicManager {
 
     /**
      * 开启扫描本地音乐
+     *
      * @param musicScanCallback
      */
-    public void startScanMusic(MusicScanCallback musicScanCallback){
+    public void startScanMusic(MusicScanCallback musicScanCallback) {
         this.mMusicScanCallback = musicScanCallback;
         mScanThread = new ScanThread(mContext, mHandler, mMusicList);
         mScanThread.start();
@@ -240,14 +244,15 @@ public class MusicManager {
 
     /**
      * 录音律动数据回调
+     *
      * @param recordDataCallBack
      */
-    public void setRecordDataCallBack(RecordDataCallBack recordDataCallBack){
+    public void setRecordDataCallBack(RecordDataCallBack recordDataCallBack) {
         this.mRecordDataCallBack = recordDataCallBack;
         mSoundRecordHelper.setDatareportCallBack(new SoundRecordHelper.SoundRecoderHelperCallbackData() {
             @Override
             public void reportdata(short[] buffer) {
-                if (mRecordDataCallBack != null){
+                if (mRecordDataCallBack != null) {
                     mRecordDataCallBack.onRecordData(buffer);
                 }
             }
@@ -257,60 +262,68 @@ public class MusicManager {
     /**
      * 开启录音
      */
-    public void startRecord(){
+    public void startRecord() {
         mSoundRecordHelper.start();
     }
 
     /**
      * 停止录音
      */
-    public void stopRecord(){
+    public void stopRecord() {
         mSoundRecordHelper.stop();
     }
 
 
-
     /**
      * 音乐播放律动数据回调
+     *
      * @param onDataCaptureListener
      */
-    public void setDataCaptureCallback(OnDataCaptureListener onDataCaptureListener){
+    public void setDataCaptureCallback(OnDataCaptureListener onDataCaptureListener) {
         getMediaPlayer().setDataCaptureListener(onDataCaptureListener);
     }
 
-    public void stopRhythm(){
-        isMusicRhythming = false;
-        getMediaPlayer().stopVisualizer();
+    public void stopRhythm() {
+        if (isMusicRhythming) {
+            isMusicRhythming = false;
+
+            getMediaPlayer().stopRhythm();
+        }
     }
 
-    public void startRhythm(){
-        isMusicRhythming = true;
-        getMediaPlayer().startVisualizer();
+    public void startRhythm() {
+        if (!isMusicRhythming) {
+            isMusicRhythming = true;
+            getMediaPlayer().startRhythm();
+        }
     }
 
-    public boolean isMusicRhythming(){
+    public boolean isMusicRhythming() {
         return isMusicRhythming;
     }
 
     /**
      * 音乐播放状态回调
+     *
      * @param playStateCallback
      */
-    public void setPlayStateCallback(PlayStateCallback playStateCallback){
+    public void setPlayStateCallback(PlayStateCallback playStateCallback) {
         this.mPlayStateCallback = playStateCallback;
     }
 
     /**
      * 音乐服务开启成功的回调
+     *
      * @param serviceConnectedCallback
      */
-    public void setServiceConnectedCallback(ServiceConnectedCallback serviceConnectedCallback){
+    public void setServiceConnectedCallback(ServiceConnectedCallback serviceConnectedCallback) {
         this.mServiceConnectedCallback = serviceConnectedCallback;
     }
 
-    public MusicPlayer getMusicPlayer(){
+    public MusicPlayer getMusicPlayer() {
         return mMusicPlayer;
     }
+
     /**
      * 播放/暂停
      */
@@ -328,6 +341,7 @@ public class MusicManager {
 
     /**
      * 播放列表音乐
+     *
      * @param musicVO
      */
     public void playItem(MusicVO musicVO) {
@@ -372,7 +386,7 @@ public class MusicManager {
         }
     }
 
-    public void changeSeek(int seek){
+    public void changeSeek(int seek) {
         if (mMusicPlayer != null) {
             try {
                 mMusicPlayer.changeSeek(seek);
@@ -384,7 +398,7 @@ public class MusicManager {
         }
     }
 
-    public void changeMode(int mode){
+    public void changeMode(int mode) {
         if (mMusicPlayer != null) {
             try {
                 mMusicPlayer.changeMode(mode);

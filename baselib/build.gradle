@@ -9,6 +9,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 28
         versionCode 7
+//        V主版本号子版本号阶段版本号_日期版本号加希腊字母版本号.比如V1_1_2_161209_beta.
         versionName "1.0.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

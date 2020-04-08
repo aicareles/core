@@ -35,8 +35,6 @@ import java.util.Random;
 
 /**
  * 歌曲播放service
- *
- * @author Wangyan
  */
 public class PlayerService extends Service implements Runnable {
     public static final String TAG             = "PlayerService";
@@ -423,8 +421,6 @@ public class PlayerService extends Service implements Runnable {
             if (serviceMusicList != null && serviceMusicList.size() > 0) {
                 switch (playMode) {
                     case PlayerFinal.MODE_SINGLE:
-                        state = PlayerFinal.STATE_PLAY;
-                        break;
                     case PlayerFinal.MODE_LOOP:
                         if(serviceMusicList.size()==1){
                             servicePosition = 0;
@@ -470,8 +466,6 @@ public class PlayerService extends Service implements Runnable {
             if (serviceMusicList != null && serviceMusicList.size() > 0) {
                 switch (playMode) {
                     case PlayerFinal.MODE_SINGLE:
-                        state = PlayerFinal.STATE_PLAY;
-                        break;
                     case PlayerFinal.MODE_LOOP:
                         if(serviceMusicList.size()==1){
                             servicePosition = 0;

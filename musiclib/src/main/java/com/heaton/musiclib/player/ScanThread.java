@@ -29,6 +29,7 @@ import java.util.Map;
  */
 
 public class ScanThread extends Thread {
+    private static final String TAG = "ScanThread";
     private Context mContext;
     private Handler mHandler;
     private ArrayList<MusicVO> mMusicList;
@@ -44,7 +45,8 @@ public class ScanThread extends Thread {
         // while (isRun) {
         // Looper.prepare();
         ContentResolver conRes = mContext.getContentResolver();
-        Cursor cur = conRes.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, null, null, MediaStore.Audio.Media.TITLE + " asc");
+//        Cursor cur = conRes.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, null, null, MediaStore.Audio.Media.TITLE + " asc");
+        Cursor cur = conRes.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, null, null, MediaStore.Audio.AudioColumns.IS_MUSIC);
 
         Dao<MusicVO, Integer> musicDao = null;
         try {
@@ -66,7 +68,7 @@ public class ScanThread extends Thread {
         if (cur.getCount() != 0) {
             while (cur.moveToNext()) {
                 String url = cur.getString(pathIndex);
-                Log.e("music_url", url);
+                Log.i(TAG,"music_url>>>>>"+url);
                 try {
                     Map<String, Object> map = new HashMap<>();
                     map.put("url", url);
@@ -116,8 +118,7 @@ public class ScanThread extends Thread {
                     }
                 }
                 music.setSort(music.id);
-
-                Log.i(PlayerFinal.TAG, "insert---->" + music.id);
+                Log.i(TAG,"music info>>>>>"+music);
                 mMusicList.add(music);
             }
         }

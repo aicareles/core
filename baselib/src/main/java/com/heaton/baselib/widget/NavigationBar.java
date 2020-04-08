@@ -47,6 +47,8 @@ public class NavigationBar extends LinearLayout implements View.OnClickListener 
     private float mTabTextSize;
     /*默认选中的tab index*/
     private int mDefaultSelectedTab = 0;
+    private int mAnimEnter = -1;//进入动画
+    private int mAnimExit = -1;//退出动画
 
     private int mCurrentSelectedTab;
 
@@ -84,6 +86,10 @@ public class NavigationBar extends LinearLayout implements View.OnClickListener 
         mViewHolderList = new ArrayList<>();
     }
 
+    public void setCustomAnim(int animEnter, int animEixt){
+        this.mAnimEnter = animEnter;
+        this.mAnimExit = animEixt;
+    }
 
     public void addTab(Class frameLayoutClass, TabParam tabParam) {
         if (TextUtils.isEmpty(tabParam.title)) {
@@ -188,6 +194,9 @@ public class NavigationBar extends LinearLayout implements View.OnClickListener 
      */
     private void showFragment(ViewHolder holder) {
         FragmentTransaction transaction = mFragmentActivity.getSupportFragmentManager().beginTransaction();
+        if (mAnimEnter != -1 && mAnimExit != -1){
+            transaction.setCustomAnimations(mAnimEnter, mAnimExit);
+        }
         if (isFragmentShown(transaction, holder.tag)) {
             return;
         }

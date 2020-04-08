@@ -217,4 +217,24 @@ public class MusicVO implements Serializable,Parcelable {
 	//	public static void main(String[] args) throws SQLException, IOException {
 //		OrmLiteConfigUtil.writeConfigFile(new File("F:\\db_config.txt"), new Class[]{MusicVO.class});
 //	}
+
+
+	@Override
+	public String toString() {
+		return "MusicVO{" +
+				"id=" + id +
+				", url='" + url + '\'' +
+				", title='" + title + '\'' +
+				", playCount=" + playCount +
+				", addDate=" + addDate +
+				", duration=" + duration +
+				", artist='" + artist + '\'' +
+				", sort=" + sort +
+				", album='" + album + '\'' +
+				", fileSize=" + fileSize +
+				", internet=" + internet +
+				", fileExists=" + fileExists +
+				", sortChanged=" + sortChanged +
+				'}';
+	}
 }

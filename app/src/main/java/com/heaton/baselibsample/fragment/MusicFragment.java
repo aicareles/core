@@ -222,7 +222,8 @@ public class MusicFragment extends BaseFragment {
                 mMusicManager.next();
                 break;
             case R.id.btn_record:
-                requestRecordPermissions();
+                mMusicManager.changeMode(PlayerFinal.MODE_SINGLE);
+//                requestRecordPermissions();
                 break;
             case R.id.btn_rhythm:
                 if (mMusicManager.isMusicRhythming()){

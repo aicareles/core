@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.util.Base64;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
@@ -12,14 +13,20 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.heaton.baselib.LogInterceptor;
 import com.heaton.baselib.Constance;
+import com.heaton.baselib.crash.CrashCollect;
+import com.heaton.baselib.crash.CrashHandler;
+import com.heaton.baselib.crash.CrashInfo;
 import com.heaton.baselib.utils.AppUtils;
 import com.heaton.baselib.utils.BluetoothUtils;
 import com.heaton.baselib.utils.FileUtils;
+import com.heaton.baselib.utils.LogUtils;
 import com.heaton.baselib.utils.SPUtils;
 import com.heaton.baselib.utils.TimeUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -130,20 +137,19 @@ public class UploadManager {
      *
      * @param
      */
-    public static void uploadCrashInfo(Context context, final File crashFile){
+    public static void uploadCrashInfo(final CrashInfo crashInfo){
         //读取txt数据
-        String crashInfo = FileUtils.getFileContent(crashFile);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new LogInterceptor()).build();//创建OkHttpClient对象。
         FormBody.Builder formBody = new FormBody.Builder();//创建表单请求体
-        formBody.add("app_package", AppUtils.getPackageName(context));
-        formBody.add("app_channel", AppUtils.getAppMetaData(context, "HEATON_CHANNEL"));
-        formBody.add("phone_system", Constance.APP.PLATFORM);
-        formBody.add("phone_brands", AppUtils.getDeviceBrand());
-        formBody.add("phone_model", AppUtils.getSystemModel());
-        formBody.add("phone_system_version", AppUtils.getSystemVersion());
-        formBody.add("app_version_name", AppUtils.getVersionName(context));
-        formBody.add("app_version_code", String.valueOf(AppUtils.getVersionCode(context)));
-        formBody.add("exception_info", crashInfo);
+        formBody.add("app_package", crashInfo.getAppPackage());
+        formBody.add("app_channel", crashInfo.getAppChannel());
+        formBody.add("phone_system", crashInfo.getPhoneSystem());
+        formBody.add("phone_brands", crashInfo.getPhoneBrands());
+        formBody.add("phone_model", crashInfo.getPhoneModel());
+        formBody.add("phone_system_version", crashInfo.getPhoneSystemVersion());
+        formBody.add("app_version_name", crashInfo.getAppVersionName());
+        formBody.add("app_version_code", crashInfo.getAppVersionCode());
+        formBody.add("exception_info", Base64.encodeToString(crashInfo.getExceptionInfo().getBytes(StandardCharsets.UTF_8), Base64.DEFAULT));
         Request request = new Request.Builder()//创建Request 对象。
                 .url(Constance.API.BASE_URL+Constance.API.APP_UPLOAD_CRASH)
                 .post(formBody.build())//传递请求体
@@ -151,7 +157,7 @@ public class UploadManager {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                LogUtils.loge("UploadManager>>>[onFailure]: 上传错误日志信息出错");
             }
 
             @Override
@@ -160,11 +166,14 @@ public class UploadManager {
                 try {
                     com.alibaba.fastjson.JSONObject dataObject = JSON.parseObject(json);
                     if (dataObject.getInteger("status") == 0) {
-                        Log.i(TAG, "onResponse: 上传错误日志信息成功");
+                        LogUtils.logi("UploadManager>>>[onResponse]: 上传错误日志信息成功");
                         //删除文件
-                        crashFile.delete();
+                        File crashLogFile = CrashCollect.getCrashLogFile();
+                        if (crashLogFile.exists()){
+                            crashLogFile.delete();
+                        }
                     } else {
-                        Log.e(TAG, "onResponse: 上传错误日志信息失败");
+                        LogUtils.loge("UploadManager>>>[onResponse]: 上传错误日志信息失败");
                     }
                 } catch (com.alibaba.fastjson.JSONException e) {
                     e.printStackTrace();

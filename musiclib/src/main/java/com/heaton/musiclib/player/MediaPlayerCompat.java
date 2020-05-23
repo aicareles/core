@@ -1,13 +1,22 @@
 package com.heaton.musiclib.player;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.audiofx.Visualizer;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 
+import com.heaton.musiclib.MusicManager;
 import com.heaton.musiclib.player.callback.OnCompletionListener;
 import com.heaton.musiclib.player.callback.OnDataCaptureListener;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 public class MediaPlayerCompat implements IPlayer {
@@ -16,7 +25,7 @@ public class MediaPlayerCompat implements IPlayer {
 
     private MediaPlayer customMediaPlayer = new MediaPlayer();
     private android.media.MediaPlayer nativeMediaPlayer = new android.media.MediaPlayer();
-    private PlayerType playerType = PlayerType.CUSTOM_PLAYER;
+    private PlayerType playerType = PlayerType.NATIVE_PLAYER;
 
     @Override
     public void setVolume(float leftVolume, float rightVolume) {
@@ -94,14 +103,27 @@ public class MediaPlayerCompat implements IPlayer {
 
     @Override
     public void play(String path) throws IOException {
+        Log.e(TAG, "play: "+path);
         if (isNativeMediaPlayer()){
             nativeMediaPlayer.reset();
             nativeMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            /*if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Long.parseLong(path));
+                nativeMediaPlayer.setDataSource(MusicManager.getInstance().getContext(),uri);
+            }else {
+                nativeMediaPlayer.setDataSource(path);
+            }*/
             nativeMediaPlayer.setDataSource(path);
             nativeMediaPlayer.prepare();
         }else {
             customMediaPlayer.reset();
             customMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            /*if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Long.parseLong(path));
+                customMediaPlayer.setDataSource(MusicManager.getInstance().getContext(), uri);
+            }else {
+                customMediaPlayer.setDataSource(path);
+            }*/
             customMediaPlayer.setDataSource(path);
             customMediaPlayer.prepare();
         }
@@ -169,7 +191,6 @@ public class MediaPlayerCompat implements IPlayer {
 
             @Override
             public void onFftDataCapture(Visualizer visualizer, byte[] fft, int samplingRate) {
-                Log.i(TAG, "onFftDataCapture: ");
                 int length = fft.length;
                 short[] b = new short[length / 4];
                 for (int i = 0; i < length; i += 4) {

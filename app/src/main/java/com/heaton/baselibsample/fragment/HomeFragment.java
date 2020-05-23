@@ -1,21 +1,19 @@
 package com.heaton.baselibsample.fragment;
 
 import android.Manifest;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.View;
 
 import com.heaton.baselib.app.cache.ACache;
 import com.heaton.baselib.base.BaseFragment;
 import com.heaton.baselib.callback.CallBack;
-import com.heaton.baselib.crash.RCrashHandler;
 import com.heaton.baselib.manager.UpdateManager;
 import com.heaton.baselib.manager.UploadManager;
+import com.heaton.baselib.utils.AppUtils;
 import com.heaton.baselib.utils.DialogUtils;
 import com.heaton.baselib.utils.LogUtils;
+import com.heaton.baselib.utils.NotificationUtil;
 import com.heaton.baselib.utils.ThreadUtils;
 import com.heaton.baselib.utils.SPUtils;
 import com.heaton.baselibsample.R;
@@ -64,11 +62,10 @@ public class HomeFragment extends BaseFragment {
 
     @Override
     protected void bindData() {
-        initCrash();
         //上传第一次安装信息
         UploadManager.uploadInstallInfo(getContext());
         //更新版本
-        new UpdateManager(getActivity()).versionUpdate();
+        updateVersion();
         //上传操作信息
 //        UploadManager.uploadStatusInfo(getContext());
 
@@ -78,6 +75,22 @@ public class HomeFragment extends BaseFragment {
 
         initLog();
 
+        if (!NotificationUtil.isNotificationEnabled(getContext())){
+            NotificationUtil.enableNotificationToSet(getContext());
+        }
+
+    }
+
+    private void updateVersion() {
+        String channel = AppUtils.getAppMetaData(getContext(), "HEATON_CHANNEL");
+        if (channel.equals("google")){
+
+        }
+        new UpdateManager.Builder()
+                .iconLarge(R.mipmap.ic_launcher)
+                .iconSmall(R.mipmap.ic_launcher)
+                .build(getActivity())
+                .versionUpdate();
     }
 
     private void initLog() {
@@ -99,11 +112,6 @@ public class HomeFragment extends BaseFragment {
                 "            \"contributorId\": 1,\n" +
                 "            \"date\": \"2019-04-18 00:00:00\",\n" +
                 "            \"des\": \"一个帮助你快速实现底部导航的自定义控件。\"}");
-    }
-
-    private void initCrash() {
-        //初始化崩溃日志路径
-        RCrashHandler.getInstance().init(getContext(), null);
     }
 
     @Permission(value = {Manifest.permission.CAMERA}, rationale = "为了更好的体验，请打开相机权限", requestCode = REQUEST_PERMISSION_CAMERA)

@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
 /**
  * description $desc$
@@ -22,7 +23,7 @@ public class NotificationUtil {
 
     @TargetApi(Build.VERSION_CODES.O)
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public static void showNotifiction(Context context, String title, String content, Class<?>piClass, int largeIcon, int smallIcon) {
+    public static void showNotification(Context context, String title, String content, Class<?>piClass, int largeIcon, int smallIcon, int id) {
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Intent intent = new Intent(context, piClass);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
@@ -30,11 +31,11 @@ public class NotificationUtil {
         //版本兼容
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {//兼容Android8.0
             String appName = AppUtils.getAppName(context);
-            String id = appName+"_channelId";
-            NotificationChannel mChannel = new NotificationChannel(id, appName, NotificationManager.IMPORTANCE_HIGH);
+            String _channelId = appName+"_channelId";
+            NotificationChannel mChannel = new NotificationChannel(_channelId, appName, NotificationManager.IMPORTANCE_HIGH);
             mChannel.setLockscreenVisibility(NotificationCompat.VISIBILITY_PUBLIC);
             manager.createNotificationChannel(mChannel);
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, id);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, _channelId);
             builder.setContentTitle(title)  //标题
                     .setContentText(content)   //内容
 //                    .setSubText("notice")     //内容下面的一小段文字
@@ -48,7 +49,7 @@ public class NotificationUtil {
                     .setAutoCancel(true);       //设置点击后取消Notification
             builder.setContentIntent(pendingIntent);    //绑定PendingIntent对象
             Notification notification = builder.build();
-            manager.notify(1, notification);
+            manager.notify(id, notification);
         } else if (Build.VERSION.SDK_INT >= 23) {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
             builder.setContentTitle(title)
@@ -64,7 +65,7 @@ public class NotificationUtil {
                     .setOngoing(false)
                     .setWhen(System.currentTimeMillis());
             Notification notification = builder.build();
-            manager.notify(1, notification);
+            manager.notify(id, notification);
         } else {
             Notification.Builder builder = new Notification.Builder(context);
             builder.setAutoCancel(true)
@@ -79,13 +80,44 @@ public class NotificationUtil {
                     .setSmallIcon(smallIcon)
                     .setWhen(System.currentTimeMillis());
             Notification notification = builder.build();
-            manager.notify(1, notification);
+            manager.notify(id, notification);
         }
     }
 
-    public static void cancelNotifiction(Context context){
+    public static void cancelNotification(Context context, int id){
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.cancel(1);
+        manager.cancel(id);
+    }
+
+    public static boolean isNotificationEnabled(Context context) {
+        boolean isOpened = false;
+        try {
+            isOpened = NotificationManagerCompat.from(context).areNotificationsEnabled();
+        } catch (Exception e) {
+            e.printStackTrace();
+            isOpened = false;
+        }
+        return isOpened;
+    }
+
+    public static void enableNotificationToSet(Context context) {
+        Intent intent = new Intent();
+        if (Build.VERSION.SDK_INT >= 26) {
+            // android 8.0引导
+            intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+            intent.putExtra("android.provider.extra.APP_PACKAGE", context.getPackageName());
+        } else if (Build.VERSION.SDK_INT >= 21) {
+            // android 5.0-7.0
+            intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+            intent.putExtra("app_package", context.getPackageName());
+            intent.putExtra("app_uid", context.getApplicationInfo().uid);
+        } else {
+            // 其他
+            intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+            intent.setData(Uri.fromParts("package", context.getPackageName(), null));
+        }
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 
 }

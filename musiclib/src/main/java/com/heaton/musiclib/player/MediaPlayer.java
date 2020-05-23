@@ -10,6 +10,7 @@ import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
+import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
 
@@ -40,6 +41,7 @@ public class MediaPlayer implements Runnable {
     private OnErrorListener onErrorListener;
     private PlayerStates state = new PlayerStates();
     private String sourcePath = null;
+    private Uri sourceUri = null;
     private int sourceRawResId = -1;
     private Context mContext;
     private boolean stop = false;
@@ -116,6 +118,11 @@ public class MediaPlayer implements Runnable {
         sourcePath = src;
     }
 
+    public void setDataSource(Context context, Uri uri){
+        mContext = context;
+        this.sourceUri = uri;
+    }
+
     public void setDataSource(Context context, int resid) {
         mContext = context;
         sourceRawResId = resid;
@@ -132,7 +139,7 @@ public class MediaPlayer implements Runnable {
     }
 
     public void prepare() {
-        if (sourcePath == null) {
+        if (sourcePath == null && sourceUri == null) {
             throw new IllegalArgumentException("sourcePath can't be null");
         }
         initMediaDecode();
@@ -224,6 +231,7 @@ public class MediaPlayer implements Runnable {
         // try to set the source, this might fail
         try {
             if (sourcePath != null) extractor.setDataSource(this.sourcePath);
+            if (sourceUri != null) extractor.setDataSource(mContext, this.sourceUri, null);
             if (sourceRawResId != -1) {
                 AssetFileDescriptor fd = mContext.getResources().openRawResourceFd(sourceRawResId);
                 extractor.setDataSource(fd.getFileDescriptor(), fd.getStartOffset(), fd.getDeclaredLength());
@@ -429,6 +437,7 @@ public class MediaPlayer implements Runnable {
         }
         // clear source and the other globals
         sourcePath = null;
+        sourceUri = null;
         sourceRawResId = -1;
         duration = 0;
         mime = null;

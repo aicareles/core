@@ -8,11 +8,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -22,14 +22,21 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.heaton.baselib.BuildConfig;
+import com.heaton.baselib.Constance;
 import com.heaton.baselib.FileProvider7;
 import com.heaton.baselib.LogInterceptor;
 import com.heaton.baselib.R;
-import com.heaton.baselib.Constance;
-import com.heaton.baselib.utils.AppUtils;
 import com.heaton.baselib.bean.UpdateVO;
+import com.heaton.baselib.callback.CallBack;
+import com.heaton.baselib.utils.AppUtils;
 import com.heaton.baselib.utils.FileUtils;
 import com.heaton.baselib.utils.LogUtils;
+import com.heaton.baselib.utils.ThreadUtils;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,7 +45,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -79,6 +85,42 @@ public class UpdateManager {
     private float mSize;
     private AlertDialog mDialog;
     private boolean mShowDialog;
+    private Builder mBuilder;
+    private UpdateNotification updateNotification;
+
+    public static class Builder {
+        private int iconSmall;
+        private int iconLarge;
+        private boolean supportGoogle = true;
+        private boolean isForceUpdate;
+
+        public Builder(){}
+
+        public Builder iconSmall(int val) {
+            iconSmall = val;
+            return this;
+        }
+
+        public Builder iconLarge(int val) {
+            iconLarge = val;
+            return this;
+        }
+
+        public Builder supportGoogle(boolean supportGoogle) {
+            this.supportGoogle = supportGoogle;
+            return this;
+        }
+
+        public Builder isForceUpdate(boolean val) {
+            isForceUpdate = val;
+            return this;
+        }
+
+
+        public UpdateManager build(Activity context) {
+            return new UpdateManager(context, this);
+        }
+    }
 
 
     private MessageHandler mHandler = new MessageHandler();
@@ -92,6 +134,7 @@ public class UpdateManager {
                     if (mDownloadListener != null) {
                         mDownloadListener.onPreDownload((String) msg.obj);
                     }
+                    updateNotification = new UpdateNotification(mContext, mContext.getClass(), mBuilder.iconLarge, mBuilder.iconSmall);
                     break;
                 case DOWN_UPDATE:
                     if (mProgress != null) {
@@ -100,19 +143,19 @@ public class UpdateManager {
                     if (mDownloadListener != null) {
                         mDownloadListener.onDownloading(msg.arg1);
                     }
+                    updateNotification.setProgress(msg.arg1);
                     break;
                 case DOWN_OVER:
                     if (mDownloadListener != null) {
                         mDownloadListener.onDownloadComplete();
                     }
+                    updateNotification.install((File) msg.obj);
                     install((File) msg.obj);
                     break;
                 case DOWN_FAIL:
                     if (mDownloadDialog != null) {
                         mDownloadDialog.dismiss();
-
                         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-//						builder.setTitle("应用更新");
                         builder.setCancelable(false);
                         builder.setMessage(R.string.down_fail);
                         final String url = (String) msg.obj;
@@ -135,6 +178,7 @@ public class UpdateManager {
                     if (mDownloadListener != null) {
                         mDownloadListener.onDownloadFailed();
                     }
+                    updateNotification.setContentText("更新失败");
                     break;
                 default:
                     super.dispatchMessage(msg);
@@ -142,8 +186,9 @@ public class UpdateManager {
         }
     }
 
-    public UpdateManager(Activity activity) {
+    protected UpdateManager(Activity activity, Builder builder) {
         this.mContext = activity;
+        this.mBuilder = builder;
     }
 
     /**
@@ -195,6 +240,48 @@ public class UpdateManager {
         });
     }
 
+    private void googleVersionUpdate(){
+        ThreadUtils.async(new CallBack() {
+            @Override
+            public void execute() {
+                Document document = null;
+                try {
+//                    document = Jsoup.connect("https://play.google.com/store/apps/details?id=" + mContext.getPackageName() + "&hl=en")
+                    document = Jsoup.connect("https://play.google.com/store/apps/details?id=" + "cn.com.heaton.coolbag" + "&hl=en")
+                            .timeout(30000)
+                            .userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
+                            .referrer("http://www.google.com")
+                            .get();
+                    if (document != null) {
+                        Elements element = document.getElementsContainingOwnText("Current Version");
+                        for (Element ele : element) {
+                            if (ele.siblingElements() != null) {
+                                Elements sibElemets = ele.siblingElements();
+                                for (Element sibElemet : sibElemets) {
+                                    String newVersion = sibElemet.text();
+                                    Log.e(TAG, "execute: 当前版本："+newVersion);
+                                    if (Double.parseDouble(BuildConfig.VERSION_NAME) < Double.parseDouble(newVersion)) {
+                                        //perform your task here like show alert dialogue "Need to upgrade app"
+                                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                                        intent.setData(Uri.parse("market://details?id=" + mContext.getPackageName()));
+                                        if (intent.resolveActivity(mContext.getPackageManager()) != null) { //可以接收
+                                            mContext.startActivity(intent);
+                                        } else { //没有应用市场，我们通过浏览器跳转到Google Play
+                                            intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" + mContext.getPackageName()));
+                                            mContext.startActivity(intent);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     public void showNoticeDialog(String updateMsg, String downloadUrl, float size) {
         showNoticeDialog(updateMsg, downloadUrl, size, true);
     }
@@ -211,7 +298,22 @@ public class UpdateManager {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                downloadFile(url, s, show);
+                if (mBuilder.supportGoogle && AppUtils.getAppMetaData(mContext, "HEATON_CHANNEL").equals("google")){
+//                if (mBuilder.supportGoogle){
+                    String packageName = mContext.getPackageName();
+//                    String packageName = "cn.com.heaton.coolbag";
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse("market://details?id=" + packageName));
+                    intent.setPackage("com.android.vending");//这里对应的是谷歌商店，跳转别的商店改成对应的即可
+                    if (intent.resolveActivity(mContext.getPackageManager()) != null) { //可以接收
+                        mContext.startActivity(intent);
+                    } else { //没有应用市场，我们通过浏览器跳转到Google Play
+                        intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" + packageName));
+                        mContext.startActivity(intent);
+                    }
+                }else {
+                    downloadFile(url, s, show);
+                }
             }
         });
         builder.setNegativeButton(R.string.remind_later, new DialogInterface.OnClickListener() {
@@ -237,7 +339,7 @@ public class UpdateManager {
         //解决android10.0  安装包文件放到/storage/emulated/0/Android/data/包名/files文件夹下,不需要动态授权
         /*File path = Environment.getExternalStorageDirectory();
         File dirPath = new File(path, "download");*/
-        File dirPath = FileUtils.getFilePath(mContext, "download");
+        File dirPath = FileUtils.getFilePath(mContext, "apk");
         LogUtils.logi("UpdateManager>>>[downloadFile]: "+dirPath);
         if (!dirPath.exists()) {
             if (dirPath.mkdir()) {
@@ -424,5 +526,70 @@ public class UpdateManager {
             context.grantUriPermission(packageName, fileUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }
     }
+
+
+   /* NotificationCompat.Builder notifyBuilder;
+    NotificationManager manager;
+    public void showNotification(String title, String content, Class<?>piClass, int largeIcon, int smallIcon, int id) {
+        manager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        Intent intent = new Intent(mContext, piClass);
+        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
+        //版本兼容
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {//兼容Android8.0
+            String appName = AppUtils.getAppName(mContext);
+            String _channelId = appName+"_channelId";
+            NotificationChannel mChannel = new NotificationChannel(_channelId, appName, NotificationManager.IMPORTANCE_DEFAULT);
+            mChannel.setLockscreenVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+            manager.createNotificationChannel(mChannel);
+            notifyBuilder = new NotificationCompat.Builder(mContext, _channelId);
+            notifyBuilder.setContentTitle(title)  //标题
+                    .setContentText(content)   //内容
+                    .setWhen(System.currentTimeMillis())    //系统显示时间
+                    .setSmallIcon(smallIcon)     //收到信息后状态栏显示的小图标
+                    .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), largeIcon))
+                    .setContentIntent(pendingIntent);    //绑定PendingIntent对象
+            Notification notification = notifyBuilder.build();
+            manager.notify(id, notification);
+        } else if (Build.VERSION.SDK_INT >= 23) {
+            notifyBuilder = new NotificationCompat.Builder(mContext);
+            notifyBuilder.setContentTitle(title)
+                    .setContentText(content)
+                    .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), largeIcon))
+                    .setSmallIcon(smallIcon)
+                    .setContentIntent(pendingIntent)
+                    .setWhen(System.currentTimeMillis());
+            Notification notification = notifyBuilder.build();
+            manager.notify(id, notification);
+        } else {
+            Notification.Builder builder = new Notification.Builder(mContext);
+            builder.setAutoCancel(true)
+                    .setContentIntent(pendingIntent)
+                    .setContentTitle(title)
+                    .setContentText(content)
+                    .setOngoing(false)
+                    .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), largeIcon))
+                    .setSmallIcon(smallIcon)
+                    .setWhen(System.currentTimeMillis());
+            Notification notification = builder.build();
+            manager.notify(id, notification);
+        }
+    }
+
+    private void updateNotification(int arg1) {
+        if (Build.VERSION.SDK_INT >= 24){
+            notifyBuilder.setProgress(100,arg1,false);
+            notifyBuilder.setContentText(arg1+"%");
+            manager.notify(1001,notifyBuilder.build());
+        }else{
+            Notification notification = notifyBuilder.build();
+            notification.contentView.setProgressBar(android.R.id.progress,100,arg1,false);
+            notifyBuilder.setContentText(arg1+"%");
+            manager.notify(1001,notification);
+        }
+    }
+
+    private void cancelNotification(){
+
+    }*/
 
 }

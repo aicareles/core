@@ -26,6 +26,7 @@ import com.heaton.musiclib.R;
 import com.heaton.musiclib.player.MediaPlayerCompat;
 import com.heaton.musiclib.player.PlayerHelper;
 import com.heaton.musiclib.player.constant.PlayerFinal;
+import com.heaton.musiclib.utils.Utils;
 import com.heaton.musiclib.vo.MusicVO;
 
 import java.io.IOException;
@@ -570,12 +571,11 @@ public class PlayerService extends Service implements Runnable {
         stateChange = true;
         // 开启常驻线程
         new Thread(this).start();
-//        startForeService();
-
+        startForeService();
     }
 
     private void startForeService() {
-        String title = "正在后台运行";
+        String title = "正在运行";//
         String content = "";
         NotificationManager manager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
 //        Intent nfIntent = new Intent(this, MainActivity.class);
@@ -583,9 +583,9 @@ public class PlayerService extends Service implements Runnable {
         Notification notification  = null;
         //版本兼容
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {//兼容Android8.0
-            String id = "ipark_app_channelId";
-            String name = "ipark_app";
-            NotificationChannel mChannel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_LOW);
+            String appName = Utils.getAppName(getApplicationContext());
+            String id = appName+"_channelId";
+            NotificationChannel mChannel = new NotificationChannel(id, appName, NotificationManager.IMPORTANCE_LOW);
             manager.createNotificationChannel(mChannel);
             NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), id);
             builder
@@ -594,6 +594,7 @@ public class PlayerService extends Service implements Runnable {
                     .setContentText(content) //内容
                     .setWhen(System.currentTimeMillis())    //系统显示时间
                     .setSmallIcon(R.drawable.ic_launcher)     //收到信息后状态栏显示的小图标
+                    .setAutoCancel(true)
                     .setLargeIcon(BitmapFactory.decodeResource(this.getResources(),
                             R.drawable.ic_launcher));
             notification = builder.build();
@@ -610,6 +611,11 @@ public class PlayerService extends Service implements Runnable {
             notification.defaults = Notification.DEFAULT_SOUND; //设置为默认的声音
         }
         startForeground(NOTIFICATION_ID, notification);
+    }
+
+    public static void cancelNotifiction(Context context){
+        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.cancel(NOTIFICATION_ID);
     }
 
 

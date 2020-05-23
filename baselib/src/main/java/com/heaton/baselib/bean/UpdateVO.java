@@ -15,5 +15,5 @@ public class UpdateVO implements Serializable {
 	public String app_plugin_url;
 	public float  app_size;
 	public String app_update;
-	public Date   app_modified;
+	public String app_modified;
 }

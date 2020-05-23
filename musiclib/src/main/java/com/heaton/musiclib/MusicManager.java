@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -94,12 +95,16 @@ public class MusicManager {
         //绑定音乐服务
         mServiceIntent = new Intent(context, PlayerService.class);
         //开启前台服务(能够提高app的存活时间)
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            context.startForegroundService(mServiceIntent);
-//        } else {
-//            context.startService(mServiceIntent);
-//        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(mServiceIntent);
+        } else {
+            context.startService(mServiceIntent);
+        }
         context.bindService(mServiceIntent, mServiceConnection, Service.BIND_AUTO_CREATE);
+    }
+
+    public void startForegroundService(){
+
     }
 
     public void setMediaPlayerType(MediaPlayerCompat.PlayerType type) {
@@ -204,8 +209,18 @@ public class MusicManager {
      * @param musicScanCallback
      */
     public void startScanMusic(MusicScanCallback musicScanCallback) {
+        startScanMusic(null, null, musicScanCallback);
+    }
+
+    /**
+     * 开启扫描本地音乐
+     * @param where 过滤条件
+     * @param sortOrder 歌曲排序条件
+     * @param musicScanCallback
+     */
+    public void startScanMusic(String where, String sortOrder, MusicScanCallback musicScanCallback) {
         this.mMusicScanCallback = musicScanCallback;
-        mScanThread = new ScanThread(mContext, mHandler, mMusicList);
+        mScanThread = new ScanThread(mContext, mHandler, mMusicList, where, sortOrder);
         mScanThread.start();
         findByDB();
     }

@@ -124,7 +124,7 @@ public class TextDrawable extends AppCompatTextView {
     /**
      * 设置上部图片并重绘
      */
-    public void setDrawable(Drawable drawableTop) {
+    public void setDrawableTop(Drawable drawableTop) {
         this.drawableTop = drawableTop;
         invalidate();
     }

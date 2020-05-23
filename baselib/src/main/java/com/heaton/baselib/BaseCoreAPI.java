@@ -3,6 +3,7 @@ package com.heaton.baselib;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
+import com.heaton.baselib.api.Api;
 import com.heaton.baselib.app.language.LanguageManager;
 import com.heaton.baselib.utils.LogUtils;
 
@@ -25,6 +26,9 @@ public class BaseCoreAPI {
         }
         LogUtils.logInit(configuration.loggable);
         LanguageManager.init(configuration.language);
+        if (configuration.apiConfig != null){
+            Api.init(configuration.apiConfig);
+        }
     }
 
     public static Context getContext(){

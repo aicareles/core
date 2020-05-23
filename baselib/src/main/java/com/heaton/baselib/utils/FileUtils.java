@@ -61,10 +61,10 @@ public class FileUtils {
     }
 
     /**
-     * 获取sd卡的目录
+     * 获取外部存储的目录，若不存在，则获取内部存储目录
      * @param context
      * @param child  如:  download   log
-     * @return  /storage/emulated/0/Android/data/包名/files
+     * @return  /storage/emulated/0/Android/data/< package name >/files
      */
     public static File getFilePath(Context context, String child){
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
@@ -72,8 +72,13 @@ public class FileUtils {
             //外部存储可用
             return context.getExternalFilesDir(child);
         }else {
-            //外部存储不可用
-            return context.getFilesDir();
+            //外部存储不可用,获取内部存储 /data/data/< package name >/files/…
+            String dirPath = context.getFilesDir() + File.separator + child;
+            File file = new File(dirPath);
+            if (!file.exists()){
+                file.mkdirs();
+            }
+            return file;
         }
     }
 

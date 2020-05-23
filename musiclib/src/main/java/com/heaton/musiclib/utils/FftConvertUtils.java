@@ -1,4 +1,4 @@
-package com.heaton.musiclib;
+package com.heaton.musiclib.utils;
 
 
 import csh.tiro.cc.fft.int16FFT;

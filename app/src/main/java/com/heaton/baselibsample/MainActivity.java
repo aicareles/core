@@ -4,23 +4,28 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-
+import android.util.Log;
 import com.heaton.baselib.base.BaseActivity;
+import com.heaton.baselib.crash.CrashHandler;
+import com.heaton.baselib.crash.CrashInfo;
 import com.heaton.baselib.utils.LogUtils;
 import com.heaton.baselib.widget.NavigationBar;
+import com.heaton.baselibsample.activity.CrashActivity;
 import com.heaton.baselibsample.fragment.HomeFragment;
 import com.heaton.baselibsample.fragment.MusicFragment;
 import com.heaton.baselibsample.fragment.SettingFragment;
+import com.heaton.baselibsample.mvp.LoginActivity;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 import butterknife.BindView;
-
 
 public class MainActivity extends BaseActivity {
 
     @BindView(R.id.navigationBar)
     NavigationBar navigationBar;
+//    private String ss = null;
+//    private String ss = "修复后的数据";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +36,12 @@ public class MainActivity extends BaseActivity {
             LogUtils.logi("MainActivity>>>[onCreate]: "+getDarkModeStatus(this));
         }
         super.onCreate(savedInstanceState);
+
+        initCrash();
+
+        toActivity(LoginActivity.class);
+
+//        Log.e(TAG, "onCreate: "+ss.toString());
     }
 
     @Override
@@ -51,14 +62,10 @@ public class MainActivity extends BaseActivity {
         super.onSaveInstanceState(outState);
     }
 
-    @Override
+    /*@Override
     public void onBackPressed() {
-        /*if (!HandleBackUtil.handleBackPress(this)) {
-//            super.onBackPressed();
-            home();
-        }*/
         home();
-    }
+    }*/
 
     private void home() {
         //实现Home键效果
@@ -72,5 +79,19 @@ public class MainActivity extends BaseActivity {
     public static boolean getDarkModeStatus(Context context) {
         int mode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         return mode == Configuration.UI_MODE_NIGHT_YES;
+    }
+
+    private void initCrash() {
+        new CrashHandler.Builder()
+//                .targetClass(CrashActivity.class)
+//                .crashUploader(new CrashHandler.CrashUploader() {
+//                    @Override
+//                    public void crashMessage(CrashInfo crashInfo) {
+//                        Log.e(TAG, "uploadCrashMessage: "+crashInfo.toString());
+//
+//                    }
+//                })
+                .build()
+                .init(getApplicationContext());
     }
 }

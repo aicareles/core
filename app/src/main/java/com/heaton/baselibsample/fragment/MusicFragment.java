@@ -2,8 +2,6 @@ package com.heaton.baselibsample.fragment;
 
 import android.Manifest;
 import android.os.Bundle;
-import android.os.RemoteException;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +14,7 @@ import com.heaton.baselib.base.BaseActivity;
 import com.heaton.baselib.base.BaseFragment;
 import com.heaton.baselibsample.adapter.LocalMusicAdapter;
 import com.heaton.baselibsample.R;
-import com.heaton.musiclib.FftConvertUtils;
+import com.heaton.musiclib.utils.FftConvertUtils;
 import com.heaton.musiclib.MusicManager;
 import com.heaton.musiclib.player.MediaPlayerCompat;
 import com.heaton.musiclib.player.callback.MusicScanCallback;
@@ -33,12 +31,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnItemClick;
-import cn.com.superLei.aoparms.annotation.Permission;
 import cn.com.superLei.aoparms.annotation.PermissionDenied;
 import cn.com.superLei.aoparms.annotation.PermissionNoAskDenied;
 import cn.com.superLei.aoparms.common.permission.AopPermissionUtils;
-import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.EasyPermissions;
 
 /**
  * description $desc$
@@ -94,7 +89,8 @@ public class MusicFragment extends BaseFragment {
         mMusicManager = MusicManager.getInstance();
         mMusicManager.init(getContext());
         //需要audio权限
-        mMusicManager.setMediaPlayerType(MediaPlayerCompat.PlayerType.CUSTOM_PLAYER);
+        mMusicManager.setMediaPlayerType(MediaPlayerCompat.PlayerType.NATIVE_PLAYER);
+//        mMusicManager.setMediaPlayerType(MediaPlayerCompat.PlayerType.CUSTOM_PLAYER);
         requestReadPermissions();
     }
 
@@ -258,7 +254,7 @@ public class MusicFragment extends BaseFragment {
 //    @Permission(value = {Manifest.permission.READ_EXTERNAL_STORAGE}, rationale = "音乐加载需要读取SD卡权限", requestCode = REQUEST_READ_PERMISSIONS)
     private void requestReadPermissions() {
         ((BaseActivity)mActivity)
-                .requestPermission(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                .requestPermission(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         "音乐加载需要读取SD卡权限", new BaseActivity.GrantedResult() {
                             @Override
                             public void onResult(boolean granted) {

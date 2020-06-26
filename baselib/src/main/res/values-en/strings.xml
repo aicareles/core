@@ -15,4 +15,6 @@
     <string name="retry">Retry</string>
     <string name="remind_later">Remind later</string>
     <string name="download_url_error">Download url error</string>
+
+    <string name="toSetting">Go to settings</string>
 </resources>

@@ -32,7 +32,7 @@ public class ThreadUtils {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<T>() {
             @Override
             public void onSubscribe(Disposable d) {
-
+                callBackUI.onPreExecute(d);
             }
 
             @Override

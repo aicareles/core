@@ -15,4 +15,6 @@
     <string name="retry">重试</string>
     <string name="remind_later">稍后提醒</string>
     <string name="download_url_error">下载地址不正确</string>
+
+    <string name="toSetting">去设置</string>
 </resources>

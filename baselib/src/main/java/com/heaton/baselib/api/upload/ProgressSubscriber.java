@@ -3,8 +3,6 @@ package com.heaton.baselib.api.upload;
 import android.app.Activity;
 import android.util.Log;
 
-import com.heaton.baselib.api.SubscriberOnNextListener;
-
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 

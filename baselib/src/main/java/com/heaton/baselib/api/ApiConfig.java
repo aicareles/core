@@ -10,9 +10,9 @@ public class ApiConfig {
     private String baseUrl;
     private Class apiServiceCls;
 
-    public ApiConfig(String baseUrl, Class tClass) {
+    public ApiConfig(String baseUrl, Class apiServiceCls) {
         this.baseUrl = baseUrl;
-        this.apiServiceCls = tClass;
+        this.apiServiceCls = apiServiceCls;
     }
 
     public String getBaseUrl() {

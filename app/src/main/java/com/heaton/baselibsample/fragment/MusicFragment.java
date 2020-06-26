@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.heaton.baselib.base.BaseActivity;
 import com.heaton.baselib.base.BaseFragment;
+import com.heaton.baselib.permission.IPermission;
+import com.heaton.baselib.utils.LogUtils;
 import com.heaton.baselibsample.adapter.LocalMusicAdapter;
 import com.heaton.baselibsample.R;
 import com.heaton.musiclib.utils.FftConvertUtils;
@@ -251,51 +253,67 @@ public class MusicFragment extends BaseFragment {
         mMusicManager.destory();
     }
 
-//    @Permission(value = {Manifest.permission.READ_EXTERNAL_STORAGE}, rationale = "音乐加载需要读取SD卡权限", requestCode = REQUEST_READ_PERMISSIONS)
     private void requestReadPermissions() {
-        ((BaseActivity)mActivity)
-                .requestPermission(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        "音乐加载需要读取SD卡权限", new BaseActivity.GrantedResult() {
-                            @Override
-                            public void onResult(boolean granted) {
-                                mMusicManager.startScanMusic(new MusicScanCallback() {
-                                    @Override
-                                    public void onMusicScanResult(List<MusicVO> musicList) {
-                                        mMusicList.addAll(musicList);
-                                        mLocalMusicAdapter.notifyDataSetChanged();
-                                        MusicVO musicVO = mLocalMusicAdapter.getItem(0);
-                                        if (musicVO != null){
-                                            mLocalMusicAdapter.setPlayPosition(0);
-                                            mLocalMusicAdapter.notifyDataSetChanged();
-                                            tvTitle.setText(musicVO.title);
-                                            long l = musicVO.duration;
-                                            int musicTime = (int) (l / 1000);
-                                            String fen = musicTime / 60 + "";
-                                            String miao = musicTime % 60 + "";
-                                            if (miao.length() == 1) {
-                                                miao = "0" + musicTime % 60;
-                                            }
-                                            tvSbDuration.setText(fen + ":" + miao);
-                                            if (musicVO.artist.equals("<unknown>")) {
-                                                tvArtist.setText(R.string.unknown);
-                                            } else {
-                                                tvArtist.setText(musicVO.artist);
-                                            }
-                                        }
-                                    }
-                                });
+        requestPermission(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0, "音乐加载需要读取SD卡权限", new IPermission() {
+            @Override
+            public void permissionGranted() {
+                LogUtils.logi("MusicFragment>>>[permissionGranted]: ");
+                mMusicManager.startScanMusic(new MusicScanCallback() {
+                    @Override
+                    public void onMusicScanResult(List<MusicVO> musicList) {
+                        mMusicList.addAll(musicList);
+                        mLocalMusicAdapter.notifyDataSetChanged();
+                        MusicVO musicVO = mLocalMusicAdapter.getItem(0);
+                        if (musicVO != null){
+                            mLocalMusicAdapter.setPlayPosition(0);
+                            mLocalMusicAdapter.notifyDataSetChanged();
+                            tvTitle.setText(musicVO.title);
+                            long l = musicVO.duration;
+                            int musicTime = (int) (l / 1000);
+                            String fen = musicTime / 60 + "";
+                            String miao = musicTime % 60 + "";
+                            if (miao.length() == 1) {
+                                miao = "0" + musicTime % 60;
                             }
-                        });
+                            tvSbDuration.setText(fen + ":" + miao);
+                            if (musicVO.artist.equals("<unknown>")) {
+                                tvArtist.setText(R.string.unknown);
+                            } else {
+                                tvArtist.setText(musicVO.artist);
+                            }
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void permissionNoAskDenied(int requestCode, List<String> denyNoAskList) {
+                LogUtils.logi("MusicFragment>>>[permissionNoAskDenied]: ");
+            }
+
+            @Override
+            public void permissionDenied(int requestCode, List<String> denyList) {
+                LogUtils.logi("MusicFragment>>>[permissionDenied]: ");
+            }
+        });
     }
 
-//    @Permission(value = {Manifest.permission.RECORD_AUDIO}, rationale = "获取麦克风数据需要录制权限", requestCode = REQUEST_RECORD_AUDIO_PERMISSIONS)
     private void requestRecordPermissions(){
-        ((BaseActivity)mActivity).requestPermission(new String[]{Manifest.permission.RECORD_AUDIO}, "", new BaseActivity.GrantedResult() {
+        requestPermission(new String[]{Manifest.permission.RECORD_AUDIO}, 0,"获取麦克风数据需要录制权限", new IPermission() {
             @Override
-            public void onResult(boolean granted) {
-                if (granted){
-                    mMusicManager.startRecord();
-                }
+            public void permissionGranted() {
+                LogUtils.logi("MusicFragment>>>[permissionGranted]: ");
+                mMusicManager.startRecord();
+            }
+
+            @Override
+            public void permissionNoAskDenied(int requestCode, List<String> denyNoAskList) {
+                LogUtils.logi("MusicFragment>>>[permissionNoAskDenied]: ");
+            }
+
+            @Override
+            public void permissionDenied(int requestCode, List<String> denyList) {
+                LogUtils.logi("MusicFragment>>>[permissionDenied]: ");
             }
         });
 

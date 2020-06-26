@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -27,16 +26,9 @@ import com.heaton.baselib.FileProvider7;
 import com.heaton.baselib.LogInterceptor;
 import com.heaton.baselib.R;
 import com.heaton.baselib.bean.UpdateVO;
-import com.heaton.baselib.callback.CallBack;
 import com.heaton.baselib.utils.AppUtils;
 import com.heaton.baselib.utils.FileUtils;
 import com.heaton.baselib.utils.LogUtils;
-import com.heaton.baselib.utils.ThreadUtils;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,6 +37,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -240,14 +233,13 @@ public class UpdateManager {
         });
     }
 
-    private void googleVersionUpdate(){
+    /*private void googleVersionUpdate(){
         ThreadUtils.async(new CallBack() {
             @Override
             public void execute() {
                 Document document = null;
                 try {
-//                    document = Jsoup.connect("https://play.google.com/store/apps/details?id=" + mContext.getPackageName() + "&hl=en")
-                    document = Jsoup.connect("https://play.google.com/store/apps/details?id=" + "cn.com.heaton.coolbag" + "&hl=en")
+                    document = Jsoup.connect("https://play.google.com/store/apps/details?id=" + mContext.getPackageName() + "&hl=en")
                             .timeout(30000)
                             .userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
                             .referrer("http://www.google.com")
@@ -280,7 +272,7 @@ public class UpdateManager {
                 }
             }
         });
-    }
+    }*/
 
     public void showNoticeDialog(String updateMsg, String downloadUrl, float size) {
         showNoticeDialog(updateMsg, downloadUrl, size, true);
@@ -301,7 +293,6 @@ public class UpdateManager {
                 if (mBuilder.supportGoogle && AppUtils.getAppMetaData(mContext, "HEATON_CHANNEL").equals("google")){
 //                if (mBuilder.supportGoogle){
                     String packageName = mContext.getPackageName();
-//                    String packageName = "cn.com.heaton.coolbag";
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(Uri.parse("market://details?id=" + packageName));
                     intent.setPackage("com.android.vending");//这里对应的是谷歌商店，跳转别的商店改成对应的即可
@@ -339,7 +330,7 @@ public class UpdateManager {
         //解决android10.0  安装包文件放到/storage/emulated/0/Android/data/包名/files文件夹下,不需要动态授权
         /*File path = Environment.getExternalStorageDirectory();
         File dirPath = new File(path, "download");*/
-        File dirPath = FileUtils.getFilePath(mContext, "apk");
+        File dirPath = FileUtils.getExternalFilePath(mContext, "apk");
         LogUtils.logi("UpdateManager>>>[downloadFile]: "+dirPath);
         if (!dirPath.exists()) {
             if (dirPath.mkdir()) {

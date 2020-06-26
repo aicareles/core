@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,8 @@ import android.widget.Toast;
 
 import com.heaton.baselib.R;
 import com.heaton.baselib.app.language.LanguageManager;
+import com.heaton.baselib.permission.IPermission;
+import com.heaton.baselib.permission.PermissionActivity;
 import com.heaton.baselib.utils.GlobalStatusBarUtil;
 
 import butterknife.ButterKnife;
@@ -34,7 +37,7 @@ import butterknife.Unbinder;
  * Time: 23:28
  */
 
-public abstract class BaseActivity extends PermissionActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
     protected final String TAG = this.getClass().getSimpleName();
     public Toolbar toolbar;
@@ -274,6 +277,10 @@ public abstract class BaseActivity extends PermissionActivity {
 
     public Activity getActivity(){
         return BaseActivity.this;
+    }
+
+    public void requestPermission(String[] permissions, int requestCode, String rationale, IPermission iPermission){
+        PermissionActivity.PermissionRequest(this, permissions, requestCode, rationale, iPermission);
     }
 
 }

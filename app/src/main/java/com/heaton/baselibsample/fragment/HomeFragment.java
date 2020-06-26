@@ -67,7 +67,7 @@ public class HomeFragment extends BaseFragment {
         //更新版本
         updateVersion();
         //上传操作信息
-//        UploadManager.uploadStatusInfo(getContext());
+        UploadManager.uploadStatusInfo(getContext());
 
         initData();
 
@@ -84,13 +84,12 @@ public class HomeFragment extends BaseFragment {
     private void updateVersion() {
         String channel = AppUtils.getAppMetaData(getContext(), "HEATON_CHANNEL");
         if (channel.equals("google")){
-
+            new UpdateManager.Builder()
+                    .iconLarge(R.mipmap.ic_launcher)
+                    .iconSmall(R.mipmap.ic_launcher)
+                    .build(getActivity())
+                    .versionUpdate();
         }
-        new UpdateManager.Builder()
-                .iconLarge(R.mipmap.ic_launcher)
-                .iconSmall(R.mipmap.ic_launcher)
-                .build(getActivity())
-                .versionUpdate();
     }
 
     private void initLog() {

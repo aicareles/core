@@ -1,14 +1,18 @@
 package com.heaton.baselibsample;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import com.heaton.baselib.base.BaseActivity;
+import com.heaton.baselib.callback.CallBackUI;
 import com.heaton.baselib.crash.CrashHandler;
 import com.heaton.baselib.crash.CrashInfo;
+import com.heaton.baselib.permission.IPermission;
 import com.heaton.baselib.utils.LogUtils;
+import com.heaton.baselib.utils.ThreadUtils;
 import com.heaton.baselib.widget.NavigationBar;
 import com.heaton.baselibsample.activity.CrashActivity;
 import com.heaton.baselibsample.fragment.HomeFragment;
@@ -16,9 +20,11 @@ import com.heaton.baselibsample.fragment.MusicFragment;
 import com.heaton.baselibsample.fragment.SettingFragment;
 import com.heaton.baselibsample.mvp.LoginActivity;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import butterknife.BindView;
+import io.reactivex.disposables.Disposable;
 
 public class MainActivity extends BaseActivity {
 
@@ -39,9 +45,45 @@ public class MainActivity extends BaseActivity {
 
         initCrash();
 
-        toActivity(LoginActivity.class);
+        ThreadUtils.asyncCallback(new CallBackUI<Boolean>() {
+            @Override
+            public void onPreExecute(Disposable d) {
+                super.onPreExecute(d);
+                Log.e(TAG, "onPreExecute: ");
+            }
+
+            @Override
+            public Boolean execute() {
+                Log.e(TAG, "execute: ");
+                return false;
+            }
+
+            @Override
+            public void callBackUI(Boolean aBoolean) {
+                Log.e(TAG, "callBackUI: ");
+            }
+        });
+
+//        toActivity(LoginActivity.class);
 
 //        Log.e(TAG, "onCreate: "+ss.toString());
+
+        requestPermission(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1, "sss", new IPermission() {
+            @Override
+            public void permissionGranted() {
+                LogUtils.logi("MainActivity>>>[permissionGranted]: ");
+            }
+
+            @Override
+            public void permissionNoAskDenied(int requestCode, List<String> denyNoAskList) {
+                LogUtils.logi("MainActivity>>>[permissionNoAskDenied]: "+denyNoAskList.toString());
+            }
+
+            @Override
+            public void permissionDenied(int requestCode, List<String> denyList) {
+                LogUtils.logi("MainActivity>>>[permissionDenied]: "+denyList.toString());
+            }
+        });
     }
 
     @Override
@@ -62,11 +104,6 @@ public class MainActivity extends BaseActivity {
         super.onSaveInstanceState(outState);
     }
 
-    /*@Override
-    public void onBackPressed() {
-        home();
-    }*/
-
     private void home() {
         //实现Home键效果
         Intent i= new Intent(Intent.ACTION_MAIN);
@@ -83,14 +120,13 @@ public class MainActivity extends BaseActivity {
 
     private void initCrash() {
         new CrashHandler.Builder()
-//                .targetClass(CrashActivity.class)
-//                .crashUploader(new CrashHandler.CrashUploader() {
-//                    @Override
-//                    public void crashMessage(CrashInfo crashInfo) {
-//                        Log.e(TAG, "uploadCrashMessage: "+crashInfo.toString());
-//
-//                    }
-//                })
+                .targetClass(CrashActivity.class)
+                .crashUploader(new CrashHandler.CrashUploader() {
+                    @Override
+                    public void crashMessage(CrashInfo crashInfo) {
+                        Log.e(TAG, "uploadCrashMessage: "+crashInfo.toString());
+                    }
+                })
                 .build()
                 .init(getApplicationContext());
     }

@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.heaton.baselib.api.Api;
 import com.heaton.baselib.api.BaseResponse;
-import com.heaton.baselib.api.subscriber.BaseObserver;
+import com.heaton.baselib.api.BaseObserver;
 import com.heaton.baselib.base.mvp.BaseMvpPresenter;
 import com.heaton.baselib.bean.UpdateVO;
 import com.heaton.baselib.utils.LogUtils;

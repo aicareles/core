@@ -1,13 +1,17 @@
 package com.heaton.baselib.callback;
 
+import io.reactivex.disposables.Disposable;
+
 /**
  * Description:
  * Data：2018/10/26-10:47
  * Author: Allen
  */
-public interface CallBackUI<T> {
+public abstract class CallBackUI<T> {
 
-    T execute();
+    public void onPreExecute(Disposable d){}
 
-    void callBackUI(T t);
+    public abstract T execute();
+
+    public abstract void callBackUI(T t);
 }

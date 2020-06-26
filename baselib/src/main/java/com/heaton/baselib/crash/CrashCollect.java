@@ -67,7 +67,7 @@ public class CrashCollect {
 
     CrashCollect(Context context) {
         this.context = context;
-        crashFile = FileUtils.getFilePath(this.context, "log");
+        crashFile = FileUtils.getExternalFilePath(this.context, "log");
     }
 
     public static File getCrashLogFile(){
@@ -89,7 +89,7 @@ public class CrashCollect {
         }else {
             File file = getCrashLogFile();
             if (file.exists()){
-                String crashMessage = FileUtils.getFileContent(file);
+                String crashMessage = FileUtils.getFileTxtContent(file);
                 crashInfo.setExceptionInfo(crashMessage);
             }
         }

@@ -1,4 +1,4 @@
-package com.heaton.baselib.api.subscriber;
+package com.heaton.baselib.api;
 
 import android.accounts.NetworkErrorException;
 import android.app.ProgressDialog;

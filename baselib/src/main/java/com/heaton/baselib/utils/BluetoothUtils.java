@@ -13,7 +13,11 @@ public class BluetoothUtils {
     public static boolean isBleEnable() {
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter!=null){
-            return adapter.isEnabled();
+            try {
+                return adapter.isEnabled();
+            }catch (Exception e){
+                return false;
+            }
         }
         return false;
     }

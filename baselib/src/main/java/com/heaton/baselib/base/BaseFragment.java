@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.heaton.baselib.callback.HandleBackInterface;
+import com.heaton.baselib.permission.IPermission;
+import com.heaton.baselib.permission.PermissionActivity;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -87,6 +89,10 @@ public abstract class BaseFragment extends Fragment implements HandleBackInterfa
 
     protected View inflate(int resId) {
         return LayoutInflater.from(getActivity()).inflate(resId, null);
+    }
+
+    public void requestPermission(String[] permissions, int requestCode, String rationale, IPermission iPermission){
+        PermissionActivity.PermissionRequest(mActivity, permissions, requestCode, rationale, iPermission);
     }
 
     @Override

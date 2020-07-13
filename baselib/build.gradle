@@ -8,9 +8,9 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 11
+        versionCode 1
 //        V主版本号子版本号阶段版本号_日期版本号加希腊字母版本号.比如V1_1_2_161209_beta.
-        versionName "1.0.10"
+        versionName "1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -55,11 +55,11 @@ dependencies {
 
     implementation 'com.squareup.okhttp3:okhttp:4.0.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.0.1'
-    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
-    api "io.reactivex.rxjava2:rxandroid:2.1.0"
-    api "io.reactivex.rxjava2:rxjava:2.2.6"
-    api 'com.squareup.retrofit2:retrofit:2.3.0'
+    api "io.reactivex.rxjava2:rxandroid:2.1.1"
+    api "io.reactivex.rxjava2:rxjava:2.2.10"
+    api 'com.squareup.retrofit2:retrofit:2.4.0'
     api 'com.alibaba:fastjson:1.2.49'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.orhanobut:logger:2.2.0'

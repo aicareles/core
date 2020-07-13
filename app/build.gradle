@@ -31,8 +31,8 @@ android {
         applicationId "com.heaton.baselibsample"
         minSdkVersion 18
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "1.0.7"
 //        signingConfig signingConfigs.config
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {

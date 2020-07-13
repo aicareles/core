@@ -16,7 +16,7 @@ import com.heaton.baselib.permission.IPermission;
 import com.heaton.baselib.utils.LogUtils;
 import com.heaton.baselibsample.adapter.LocalMusicAdapter;
 import com.heaton.baselibsample.R;
-import com.heaton.musiclib.utils.FftConvertUtils;
+import com.heaton.musiclib.FftConvertUtils;
 import com.heaton.musiclib.MusicManager;
 import com.heaton.musiclib.player.MediaPlayerCompat;
 import com.heaton.musiclib.player.callback.MusicScanCallback;

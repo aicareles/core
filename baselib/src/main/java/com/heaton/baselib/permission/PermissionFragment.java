@@ -2,14 +2,14 @@ package com.heaton.baselib.permission;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import com.heaton.baselib.R;
 import java.util.ArrayList;
@@ -22,85 +22,76 @@ import java.util.List;
  * des:
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class PermissionActivity extends Activity {
+public class PermissionFragment extends DialogFragment {
     private static IPermission permissionListener;
     private String[] permissions;
     private static final String PERMISSION_KEY = "permission_key";
     private static final String REQUEST_CODE = "request_code";
     private static final String REQUEST_RATIONALE = "request_rationale";
-    private int requestCode;
+    private int requestCode = 1;
     private String rationale;
+    private FragmentActivity activity;
+
+    public static PermissionFragment newInstance() {
+        return new PermissionFragment();
+    }
 
     /**
      * 跳转到Activity申请权限
      *
-     * @param context     Context
+     * @param activity     FragmentActivity
      * @param permissions Permission List
      * @param iPermission Interface
      */
-    public static void PermissionRequest(Context context, String[] permissions, int requestCode, String rationale, IPermission iPermission) {
+    public void requestPermissions(FragmentActivity activity, String[] permissions, String rationale, IPermission iPermission) {
         permissionListener = iPermission;
-        Intent intent = new Intent(context, PermissionActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        Bundle bundle = new Bundle();
-        bundle.putStringArray(PERMISSION_KEY, permissions);
-        bundle.putInt(REQUEST_CODE, requestCode);
-        bundle.putString(REQUEST_RATIONALE, rationale);
-        intent.putExtras(bundle);
-        context.startActivity(intent);
-        if (context instanceof Activity) {
-            ((Activity) context).overridePendingTransition(0, 0);
-        }
-
+        /**弄一个看不见的Fragment，来处理回调*/
+        show(activity.getSupportFragmentManager(), "");
+        this.activity = activity;
+        this.permissions = permissions;
+        this.rationale = rationale;
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_permission);
-        /*if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }*/
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            permissions = bundle.getStringArray(PERMISSION_KEY);
-            requestCode = bundle.getInt(REQUEST_CODE, 0);
-            rationale = bundle.getString(REQUEST_RATIONALE);
+    public void onStart() {
+        super.onStart();
+        if (getDialog().getWindow() != null) {
+            getDialog().getWindow().setDimAmount(0);
         }
-        if (permissions == null || permissions.length <= 0) {
-            finish();
-            return;
-        }
-        requestPermission(permissions);
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestPermissionInner(permissions);
+    }
 
     /**
      * 申请权限
      *
      * @param permissions permission list
      */
-    private void requestPermission(String[] permissions) {
-        if (PermissionUtils.hasSelfPermissions(this, permissions)) {
+    private void requestPermissionInner(String[] permissions) {
+        if (PermissionUtils.hasSelfPermissions(activity, permissions)) {
             //all permissions granted
             if (permissionListener != null) {
                 permissionListener.permissionGranted();
                 permissionListener = null;
             }
-            finish();
-            overridePendingTransition(0, 0);
+            /**移除Fragment*/
+            dismissAllowingStateLoss();
         } else {
             boolean shouldShowRequestPermissionRationale = PermissionUtils
-                    .shouldShowRequestPermissionRationale(this, permissions);
+                    .shouldShowRequestPermissionRationale(activity, permissions);
             if (TextUtils.isEmpty(rationale)){
                 //request permissions
-                ActivityCompat.requestPermissions(this, permissions, requestCode);
+                ActivityCompat.requestPermissions(activity, permissions, requestCode);
             }else {
                 if (shouldShowRequestPermissionRationale){
-                    showRequestPermissionRationale(this, permissions,rationale);
+                    showRequestPermissionRationale(activity, permissions,rationale);
                 }else {
                     //request permissions
-                    ActivityCompat.requestPermissions(this, permissions, requestCode);
+                    ActivityCompat.requestPermissions(activity, permissions, requestCode);
                 }
             }
         }
@@ -120,8 +111,7 @@ public class PermissionActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        finish();
-                        overridePendingTransition(0, 0);
+
                     }
                 })
                 .create().show();
@@ -136,7 +126,7 @@ public class PermissionActivity extends Activity {
                 permissionListener.permissionGranted();
             }
         } else {
-            if (!PermissionUtils.shouldShowRequestPermissionRationale(this, permissions)) {
+            if (!PermissionUtils.shouldShowRequestPermissionRationale(activity, permissions)) {
                 //权限被拒绝并且选中不再提示
                 if (permissions.length != grantResults.length) return;
                 List<String> denyNoAskList = new ArrayList<>();
@@ -163,7 +153,7 @@ public class PermissionActivity extends Activity {
 
         }
         permissionListener = null;
-        finish();
-        overridePendingTransition(0, 0);
+        /**移除Fragment*/
+        dismissAllowingStateLoss();
     }
 }

@@ -2,10 +2,13 @@ package com.heaton.baselib.utils;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.StatFs;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -14,6 +17,8 @@ import android.util.Log;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -21,6 +26,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Created by admin on 2017/1/16.
@@ -31,7 +39,7 @@ public class FileUtils {
     /**
      * 外置SD是否可用
      */
-    public static boolean isExternalStrorageExsist() {
+    public static boolean isMountedSDCard() {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
     }
 
@@ -394,5 +402,339 @@ public class FileUtils {
         }
         return count;
     }
+
+    /**
+     * 创建目录
+     *
+     * @param context
+     * @param dirName 文件夹名称
+     * @return
+     */
+    public static File createFileDir(Context context, String dirName) {
+        String filePath;
+        // 如SD卡已存在，则存储；反之存在data目录下
+        if (isMountedSDCard()) {
+            // SD卡路径
+            filePath = Environment.getExternalStorageDirectory() + File.separator + dirName;
+        } else {
+            filePath = context.getCacheDir().getPath() + File.separator + dirName;
+        }
+        File destDir = new File(filePath);
+        if (!destDir.exists()) {
+            boolean isCreate = destDir.mkdirs();
+            Log.i("FileUtils", filePath + " has created. " + isCreate);
+        }
+        return destDir;
+    }
+
+    /**
+     * 创建文件夹(支持覆盖已存在的同名文件夹)
+     * @param filePath
+     * @param recreate
+     * @return
+     */
+    public static boolean createFolder(String filePath, boolean recreate) {
+        String folderName = getFolderName(filePath);
+        if (folderName == null || folderName.length() == 0 || folderName.trim().length() == 0) {
+            return false;
+        }
+        File folder = new File(folderName);
+        if (folder.exists()) {
+            if (recreate) {
+                deleteFile(folderName);
+                return folder.mkdirs();
+            } else {
+                return true;
+            }
+        } else {
+            return folder.mkdirs();
+        }
+    }
+
+    /**
+     * 创建文件
+     * @param filePath 文件地址
+     * @param fileName 文件名
+     * @return
+     */
+    public static boolean createFile(String filePath, String fileName) {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            /**  注意这里是 mkdirs()方法  可以创建多个文件夹 */
+            file.mkdirs();
+        }
+        File subfile = new File(filePath, fileName);
+        if (!subfile.exists()) {
+            try {
+                return subfile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 获取文件夹名称
+     * @param filePath
+     * @return
+     */
+    public static String getFolderName(String filePath) {
+        if (filePath == null || filePath.length() == 0 || filePath.trim().length() == 0) {
+            return filePath;
+        }
+        int filePos = filePath.lastIndexOf(File.separator);
+        return (filePos == -1) ? "" : filePath.substring(0, filePos);
+    }
+
+    /**
+     * 获取文件大小，单位为byte（若为目录，则包括所有子目录和文件）
+     *
+     * @param file
+     * @return
+     */
+    public static long getFileSize(File file) {
+        long size = 0;
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                File[] subFiles = file.listFiles();
+                if (subFiles != null) {
+                    int num = subFiles.length;
+                    for (int i = 0; i < num; i++) {
+                        size += getFileSize(subFiles[i]);
+                    }
+                }
+            } else {
+                size += file.length();
+            }
+        }
+        return size;
+    }
+
+    /**
+     * 保存Bitmap到指定目录
+     *
+     * @param dir      目录
+     * @param fileName 文件名
+     * @param bitmap
+     * @throws IOException
+     */
+    public static void saveBitmap(File dir, String fileName, Bitmap bitmap) {
+        if (bitmap == null) {
+            return;
+        }
+        File file = new File(dir, fileName);
+        try {
+            file.createNewFile();
+            FileOutputStream fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 判断某目录下文件是否存在
+     *
+     * @param dir      目录
+     * @param fileName 文件名
+     * @return
+     */
+    public static boolean isFileExists(File dir, String fileName) {
+        return new File(dir, fileName).exists();
+    }
+
+    /**
+     * 获取SD卡剩余容量（单位Byte）
+     *
+     * @return
+     */
+    @SuppressWarnings("deprecation")
+    public static long gainSDFreeSize() {
+        if (isMountedSDCard()) {
+            // 取得SD卡文件路径
+            File path = Environment.getExternalStorageDirectory();
+            StatFs sf = new StatFs(path.getPath());
+            // 获取单个数据块的大小(Byte)
+            long blockSize = sf.getBlockSize();
+            // 空闲的数据块的数量
+            long freeBlocks = sf.getAvailableBlocks();
+
+            // 返回SD卡空闲大小
+            return freeBlocks * blockSize; // 单位Byte
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * 获取SD卡总容量（单位Byte）
+     *
+     * @return
+     */
+    @SuppressWarnings("deprecation")
+    public static long gainSDAllSize() {
+        if (isMountedSDCard()) {
+            // 取得SD卡文件路径
+            File path = Environment.getExternalStorageDirectory();
+            StatFs sf = new StatFs(path.getPath());
+            // 获取单个数据块的大小(Byte)
+            long blockSize = sf.getBlockSize();
+            // 获取所有数据块数
+            long allBlocks = sf.getBlockCount();
+            // 返回SD卡大小（Byte）
+            return allBlocks * blockSize;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * 保存内容
+     *
+     * @param filePath
+     *            文件路径
+     * @param content
+     *            保存的内容
+     * @throws IOException
+     */
+    public static void saveToFile(String filePath, String content)
+            throws IOException {
+        saveToFile(filePath, content, System.getProperty("file.encoding"));
+    }
+
+    /**
+     * 指定编码保存内容
+     *
+     * @param filePath
+     *            文件路径
+     * @param content
+     *            保存的内容
+     * @param encoding
+     *            写文件编码
+     * @throws IOException
+     */
+    public static void saveToFile(String filePath, String content,
+                                  String encoding) throws IOException {
+        BufferedWriter writer = null;
+        File file = new File(filePath);
+        try {
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+            writer = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(file, false), encoding));
+            writer.write(content);
+
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
+    }
+
+    /**
+     * 判断文件是否存在
+     *
+     * @param filePath
+     *            文件路径
+     * @return 是否存在
+     * @throws Exception
+     */
+    public static Boolean isExsit(String filePath) {
+        Boolean flag = false;
+        try {
+            File file = new File(filePath);
+            if (file.exists()) {
+                flag = true;
+            }
+        } catch (Exception e) {
+            Log.e("判断文件失败-->", e.getMessage());
+        }
+
+        return flag;
+    }
+
+    /**
+     *分享文件
+     * @param context
+     * @param title
+     * @param filePath
+     */
+    public static void shareFile(Context context, String title, String filePath) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        Uri uri = Uri.parse("file://" + filePath);
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        context.startActivity(Intent.createChooser(intent, title));
+    }
+
+    /**
+     *压缩
+     * @param is
+     * @param os
+     */
+    public static void zip(InputStream is, OutputStream os) {
+        GZIPOutputStream gzip = null;
+        try {
+            gzip = new GZIPOutputStream(os);
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = is.read(buf)) != -1) {
+                gzip.write(buf, 0, len);
+                gzip.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            closeIO(is, gzip);
+        }
+    }
+
+    /**
+     *
+     * @param closeables
+     */
+    public static void closeIO(Closeable... closeables) {
+        if (null == closeables || closeables.length <= 0) {
+            return;
+        }
+        for (Closeable cb : closeables) {
+            try {
+                if (null == cb) {
+                    continue;
+                }
+                cb.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     *解压
+     * @param is
+     * @param os
+     */
+    public static void unzip(InputStream is, OutputStream os) {
+        GZIPInputStream gzip = null;
+        try {
+            gzip = new GZIPInputStream(is);
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = gzip.read(buf)) != -1) {
+                os.write(buf, 0, len);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            closeIO(gzip, os);
+        }
+    }
+
 
 }

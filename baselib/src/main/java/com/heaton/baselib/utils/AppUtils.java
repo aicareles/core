@@ -31,6 +31,7 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.heaton.baselib.Constance;
 import com.heaton.baselib.R;
 
 import java.security.MessageDigest;
@@ -421,6 +422,15 @@ public class AppUtils {
             e.printStackTrace();
         }
         return channelNumber;
+    }
+
+    /**
+     * 是否是google渠道包
+     * @param context
+     * @return
+     */
+    public static boolean isGoogleChannel(Context context){
+        return AppUtils.getAppMetaData(context, Constance.APP.CHANNEL).equals("google");
     }
 
     //判断某个权限是否打开

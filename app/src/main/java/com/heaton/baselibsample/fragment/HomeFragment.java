@@ -1,17 +1,23 @@
 package com.heaton.baselibsample.fragment;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.heaton.baselib.app.cache.ACache;
 import com.heaton.baselib.base.BaseFragment;
 import com.heaton.baselib.callback.CallBack;
+import com.heaton.baselib.manager.DownloadManager;
 import com.heaton.baselib.manager.UpdateManager;
 import com.heaton.baselib.manager.UploadManager;
 import com.heaton.baselib.utils.AppUtils;
 import com.heaton.baselib.utils.DialogUtils;
+import com.heaton.baselib.utils.FileUtils;
 import com.heaton.baselib.utils.LogUtils;
 import com.heaton.baselib.utils.NotificationUtil;
 import com.heaton.baselib.utils.ThreadUtils;
@@ -21,6 +27,7 @@ import com.heaton.baselibsample.bean.Article;
 import com.heaton.baselibsample.bean.User;
 import com.heaton.baselibsample.navigation.NavigationActivity;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -222,7 +229,7 @@ public class HomeFragment extends BaseFragment {
     }
 
     @OnClick({R.id.getUser, R.id.getArticle, R.id.permission, R.id.retry, R.id.safe,
-            R.id.asyn, R.id.asyn_delay, R.id.scheduled, R.id.nav,
+            R.id.asyn, R.id.asyn_delay, R.id.scheduled, R.id.nav, R.id.download,
             R.id.dialog_default, R.id.dialog_custom, R.id.dialog_progress, R.id.dialog_bottom})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -253,10 +260,30 @@ public class HomeFragment extends BaseFragment {
             case R.id.nav:
                 toActivity(NavigationActivity.class);
                 break;
+            case R.id.download:
+                String url = "http://app.heaton.cn/Puff%20The%20Magic%20Dargan.mp3";
+                String filePath = new File(mActivity.getExternalFilesDir(Environment.DIRECTORY_MUSIC), FileUtils.getFileNameByUrl(url)).getAbsolutePath();
+                DownloadManager.download(url, filePath, new DownloadManager.OnDownloadListener() {
+                    @Override
+                    public void onDownloadSuccess(String path) {
+                        LogUtils.logi("HomeFragment>>>[onDownloadSuccess]: "+path);
+                    }
+
+                    @Override
+                    public void onDownloading(int progress) {
+                        LogUtils.logi("HomeFragment>>>[onDownloading]: "+progress);
+                    }
+
+                    @Override
+                    public void onDownloadFailed(String msg) {
+                        LogUtils.logi("HomeFragment>>>[onDownloadFailed]: "+msg);
+                    }
+                });
+                break;
             case R.id.dialog_default:
                 DialogUtils.showCommonDialog(mActivity, "提示", "这是普通的对话框", new DialogUtils.DialogCall() {
                     @Override
-                    public void onPositive() {
+                    public void onPositive(DialogInterface dialog) {
                         toast("positivie");
                     }
 
@@ -267,15 +294,10 @@ public class HomeFragment extends BaseFragment {
                 });
                 break;
             case R.id.dialog_custom:
-                DialogUtils.showCustomDialog(mActivity, "提示", "这是普通的对话框", R.layout.update_layout, new DialogUtils.DialogCall() {
+                DialogUtils.showCustomDialog(mActivity, "提示", R.layout.update_layout, new DialogUtils.DialogCall() {
                     @Override
-                    public void onPositive() {
+                    public void onPositive(DialogInterface dialog) {
                         toast("positivie");
-                    }
-
-                    @Override
-                    public void onNegative() {
-                        toast("onNegative");
                     }
                 });
                 break;

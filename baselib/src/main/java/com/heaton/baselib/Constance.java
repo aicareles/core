@@ -33,6 +33,7 @@ public class Constance {
     @Retention(RetentionPolicy.SOURCE)
     public @interface APP {
         String PLATFORM = "Android";
+        String CHANNEL = "HEATON_CHANNEL";
     }
 
 }

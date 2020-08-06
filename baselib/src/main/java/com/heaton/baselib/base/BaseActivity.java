@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.heaton.baselib.R;
 import com.heaton.baselib.app.language.LanguageManager;
 import com.heaton.baselib.permission.IPermission;
-import com.heaton.baselib.permission.PermissionActivity;
+import com.heaton.baselib.permission.PermissionCompat;
 import com.heaton.baselib.utils.GlobalStatusBarUtil;
 
 import butterknife.ButterKnife;
@@ -93,14 +93,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     /**
-     * 是否竖屏
-     * @return
-     */
-    protected boolean isPortrait(){
-        return true;
-    }
-
-    /**
      * 是否全屏
      * @return
      */
@@ -134,17 +126,17 @@ public abstract class BaseActivity extends AppCompatActivity {
         unbind.unbind();
     }
 
-    protected void toActivity(@NonNull Class cl) {
+    public void toActivity(@NonNull Class cl) {
         startActivity(new Intent(this, cl));
     }
 
-    protected void toActivity(@NonNull Class cl, Bundle bundle) {
+    public void toActivity(@NonNull Class cl, Bundle bundle) {
         Intent intent = new Intent(this, cl);
         intent.putExtra(cl.getSimpleName(), bundle);
         startActivity(intent);
     }
 
-    protected View inflate(int layoutIds) {
+    public View inflate(int layoutIds) {
         return LayoutInflater.from(this).inflate(layoutIds, null);
     }
 
@@ -196,8 +188,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void setTranslucentStatus() {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        // 设置横竖屏
-        setRequestedOrientation(isPortrait()?ActivityInfo.SCREEN_ORIENTATION_PORTRAIT:ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         GlobalStatusBarUtil.setStatusColor(this, getStatusBarColorId());
         GlobalStatusBarUtil.setStatusBarDarkFont(this, isDarkFont());
     }
@@ -279,8 +269,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         return BaseActivity.this;
     }
 
-    public void requestPermission(String[] permissions, int requestCode, String rationale, IPermission iPermission){
-        PermissionActivity.PermissionRequest(this, permissions, requestCode, rationale, iPermission);
+    public void requestPermission(String[] permissions, String rationale, IPermission iPermission){
+        PermissionCompat.requestPermissions(this, permissions, rationale, iPermission);
     }
 
 }

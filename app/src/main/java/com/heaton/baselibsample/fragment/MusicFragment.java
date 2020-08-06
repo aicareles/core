@@ -254,7 +254,7 @@ public class MusicFragment extends BaseFragment {
     }
 
     private void requestReadPermissions() {
-        requestPermission(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0, "音乐加载需要读取SD卡权限", new IPermission() {
+        requestPermission(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, "音乐加载需要读取SD卡权限", new IPermission() {
             @Override
             public void permissionGranted() {
                 LogUtils.logi("MusicFragment>>>[permissionGranted]: ");
@@ -299,7 +299,7 @@ public class MusicFragment extends BaseFragment {
     }
 
     private void requestRecordPermissions(){
-        requestPermission(new String[]{Manifest.permission.RECORD_AUDIO}, 0,"获取麦克风数据需要录制权限", new IPermission() {
+        requestPermission(new String[]{Manifest.permission.RECORD_AUDIO}, "获取麦克风数据需要录制权限", new IPermission() {
             @Override
             public void permissionGranted() {
                 LogUtils.logi("MusicFragment>>>[permissionGranted]: ");

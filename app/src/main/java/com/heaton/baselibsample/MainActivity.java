@@ -68,20 +68,10 @@ public class MainActivity extends BaseActivity {
 
 //        Log.e(TAG, "onCreate: "+ss.toString());
 
-        requestPermission(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1, "sss", new IPermission() {
+        requestPermission(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, "sss", new IPermission() {
             @Override
             public void permissionGranted() {
                 LogUtils.logi("MainActivity>>>[permissionGranted]: ");
-            }
-
-            @Override
-            public void permissionNoAskDenied(int requestCode, List<String> denyNoAskList) {
-                LogUtils.logi("MainActivity>>>[permissionNoAskDenied]: "+denyNoAskList.toString());
-            }
-
-            @Override
-            public void permissionDenied(int requestCode, List<String> denyList) {
-                LogUtils.logi("MainActivity>>>[permissionDenied]: "+denyList.toString());
             }
         });
     }

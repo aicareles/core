@@ -84,8 +84,9 @@ public class UpdateManager {
     public static class Builder {
         private int iconSmall;
         private int iconLarge;
-        private boolean supportGoogle = true;
-        private boolean isForceUpdate;
+        private boolean supportGoogle;//google平台是否支持更新(支持则弹框跳转到google play,否则不提示)
+        private boolean isForceUpdate;//是否强制更新
+        private boolean isNotification;//是否有通知栏
 
         public Builder(){}
 
@@ -109,6 +110,10 @@ public class UpdateManager {
             return this;
         }
 
+        public Builder isNotification(boolean notification) {
+            isNotification = notification;
+            return this;
+        }
 
         public UpdateManager build(Activity context) {
             return new UpdateManager(context, this);
@@ -127,7 +132,6 @@ public class UpdateManager {
                     if (mDownloadListener != null) {
                         mDownloadListener.onPreDownload((String) msg.obj);
                     }
-                    updateNotification = new UpdateNotification(mContext, mContext.getClass(), mBuilder.iconLarge, mBuilder.iconSmall);
                     break;
                 case DOWN_UPDATE:
                     if (mProgress != null) {
@@ -136,13 +140,17 @@ public class UpdateManager {
                     if (mDownloadListener != null) {
                         mDownloadListener.onDownloading(msg.arg1);
                     }
-                    updateNotification.setProgress(msg.arg1);
+                    if (updateNotification != null){
+                        updateNotification.setProgress(msg.arg1);
+                    }
                     break;
                 case DOWN_OVER:
                     if (mDownloadListener != null) {
                         mDownloadListener.onDownloadComplete();
                     }
-                    updateNotification.install((File) msg.obj);
+                    if (updateNotification != null){
+                        updateNotification.install((File) msg.obj);
+                    }
                     install((File) msg.obj);
                     break;
                 case DOWN_FAIL:
@@ -171,7 +179,9 @@ public class UpdateManager {
                     if (mDownloadListener != null) {
                         mDownloadListener.onDownloadFailed();
                     }
-                    updateNotification.setContentText("更新失败");
+                    if (updateNotification != null){
+                        updateNotification.setContentText("更新失败");
+                    }
                     break;
                 default:
                     super.dispatchMessage(msg);
@@ -179,9 +189,16 @@ public class UpdateManager {
         }
     }
 
-    protected UpdateManager(Activity activity, Builder builder) {
+    public UpdateManager(Activity activity, Builder builder) {
         this.mContext = activity;
         this.mBuilder = builder;
+        if (builder.isNotification){
+            updateNotification = new UpdateNotification(mContext, mContext.getClass(), mBuilder.iconLarge, mBuilder.iconSmall);
+        }
+    }
+
+    public UpdateManager(Activity activity) {
+        this(activity, new Builder());
     }
 
     /**
@@ -274,11 +291,16 @@ public class UpdateManager {
         });
     }*/
 
-    public void showNoticeDialog(String updateMsg, String downloadUrl, float size) {
-        showNoticeDialog(updateMsg, downloadUrl, size, true);
+    private void showNoticeDialog(String updateMsg, String downloadUrl, float size) {
+        if (AppUtils.isGoogleChannel(mContext) && !mBuilder.supportGoogle){
+            //如果属于google渠道,并且不支持google更新检查,则不做任何处理
+            LogUtils.logi("UpdateManager>>>[google平台]: 不做更新检查");
+        }else {
+            showNoticeDialog(updateMsg, downloadUrl, size, true);
+        }
     }
 
-    public void showNoticeDialog(String updateMsg, String downloadUrl, float size, boolean showDialog) {
+    private void showNoticeDialog(String updateMsg, String downloadUrl, float size, boolean showDialog) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setCancelable(false);
         builder.setTitle(R.string.update_title);
@@ -290,8 +312,7 @@ public class UpdateManager {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                if (mBuilder.supportGoogle && AppUtils.getAppMetaData(mContext, "HEATON_CHANNEL").equals("google")){
-//                if (mBuilder.supportGoogle){
+                if (AppUtils.isGoogleChannel(mContext)){
                     String packageName = mContext.getPackageName();
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(Uri.parse("market://details?id=" + packageName));

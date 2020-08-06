@@ -64,7 +64,7 @@ public class DialogUtils {
                 .setPositiveButton(R.string.sure, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        callBack.onPositive();
+                        callBack.onPositive(dialog);
                     }
                 })
                 .create();
@@ -72,10 +72,9 @@ public class DialogUtils {
         return alertDialog;
     }
 
-    public static AlertDialog showCustomDialog(Activity activity, String title, String message, int layout, final DialogCall callBack) {
+    public static AlertDialog showCustomDialog(Activity activity, String title, int layout, final DialogCall callBack) {
         AlertDialog alertDialog = new AlertDialog.Builder(activity)
                 .setTitle(title)
-                .setMessage(message)
                 .setView(layout)
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
@@ -86,7 +85,7 @@ public class DialogUtils {
                 .setPositiveButton(R.string.sure, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        callBack.onPositive();
+                        callBack.onPositive(dialog);
                     }
                 })
                 .create();
@@ -94,9 +93,13 @@ public class DialogUtils {
         return alertDialog;
     }
 
-    public interface DialogCall {
-        void onPositive();
+    public static AlertDialog showInputDialog(Activity activity, String title, final DialogCall callBack){
+        return showCustomDialog(activity, title, R.layout.dialog_edit, callBack);
+    }
 
-        void onNegative();
+    public abstract static class DialogCall {
+        public abstract void onPositive(DialogInterface dialog);
+
+        public void onNegative(){}
     }
 }

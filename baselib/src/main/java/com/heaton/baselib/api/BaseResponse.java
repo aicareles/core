@@ -1,6 +1,15 @@
 package com.heaton.baselib.api;
 
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.google.gson.annotations.SerializedName;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Type;
 
 /**
  * 获取json数据基类
@@ -8,28 +17,23 @@ import com.google.gson.annotations.SerializedName;
 
 public class BaseResponse<T> implements ErrorStatus{
 
-    @SerializedName("status")
-    public int status;
+    @SerializedName("code")
+    public int code;
     @SerializedName("msg")
     public String msg;
     @SerializedName("data")
     public T data;
 
-    /**
-     * 是否请求成功
-     *
-     * @return 是否成功
-     */
     public boolean isSuccess() {
-        return status == OK;
+        return code == OK;
     }
 
-    public int getStatus() {
-        return status;
+    public int getCode() {
+        return code;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setCode(int code) {
+        this.code = code;
     }
 
     public String getMsg() {
@@ -46,5 +50,52 @@ public class BaseResponse<T> implements ErrorStatus{
 
     public void setData(T data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "BaseResponse{" +
+                "code=" + code +
+                ", msg='" + msg + '\'' +
+                ", data=" + data +
+                '}';
+    }
+
+    public static class Wrapper {
+        public String codeKey;
+        public String msgKey;
+        public String dataKey;
+
+        public Wrapper(String codeKey, String msgKey, String dataKey) {
+            this.codeKey = codeKey;
+            this.msgKey = msgKey;
+            this.dataKey = dataKey;
+        }
+    }
+
+    public static class JsonAdapter implements JsonDeserializer<BaseResponse> {
+        private Wrapper wrapper;
+
+        public JsonAdapter(Wrapper wrapper) {
+            this.wrapper = wrapper;
+        }
+
+        @Override
+        public BaseResponse deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            try {
+                String jsonRoot = json.getAsJsonObject().toString() ;
+                BaseResponse response = new BaseResponse();
+                JSONObject jsobRespData = new JSONObject(jsonRoot) ;
+                response.code = jsobRespData.getInt(wrapper==null?"status":wrapper.codeKey) ;
+                String msg = wrapper == null ? "msg" : wrapper.msgKey;
+                if (!jsobRespData.isNull(msg)){
+                    response.msg = jsobRespData.getString(msg) ;
+                }
+                response.data = jsobRespData.get(wrapper==null?"data":wrapper.dataKey) ;
+                return response;
+            } catch (JSONException e) {
+                throw new JsonParseException(e) ;
+            }
+        }
     }
 }

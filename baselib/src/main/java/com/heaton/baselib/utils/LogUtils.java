@@ -18,13 +18,13 @@ public class LogUtils {
     /**
      * 在application调用初始化
      */
-    public static void logInit(final boolean isLoggable) {
+    public static void logInit(final boolean isLoggable, String tag) {
         FormatStrategy formatStrategy = PrettyFormatStrategy.newBuilder()
                 .showThreadInfo(false)  // (Optional) Whether to show thread info or not. Default true
                 .methodCount(0)         // (Optional) How many method line to show. Default 2
                 .methodOffset(3)        // (Optional) Hides internal method calls up to offset. Default 5
 //                .logStrategy(new LogcatLogStrategy()) // (Optional) Changes the log strategy to print out. Default LogCat
-                .tag("Heaton_LOGGER")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
+                .tag(tag)   // (Optional) Global tag for every log. Default PRETTY_LOGGER
                 .build();
         Logger.addLogAdapter(new AndroidLogAdapter(formatStrategy){
             @Override

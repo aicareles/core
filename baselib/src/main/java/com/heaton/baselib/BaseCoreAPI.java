@@ -24,7 +24,7 @@ public class BaseCoreAPI {
         if (configuration == null){
             configuration = Configuration.defalut();
         }
-        LogUtils.logInit(configuration.loggable);
+        LogUtils.logInit(configuration.loggable, configuration.logTag);
         LanguageManager.init(configuration.language);
         if (configuration.apiConfig != null){
             Api.init(configuration.apiConfig);

@@ -8,12 +8,11 @@ import android.util.Log;
 import com.heaton.baselib.BaseCoreAPI;
 import com.heaton.baselib.Configuration;
 import com.heaton.baselib.api.ApiConfig;
+import com.heaton.baselib.api.BaseResponse;
 import com.heaton.baselib.app.language.Language;
-import com.tencent.bugly.Bugly;
+import com.heaton.baselibsample.api.MyApiService;
 import com.tencent.bugly.beta.Beta;
 import com.tencent.bugly.beta.interfaces.BetaPatchListener;
-import com.tencent.tinker.loader.app.TinkerApplication;
-import com.tencent.tinker.loader.shareutil.ShareConstants;
 
 import java.util.Locale;
 
@@ -59,10 +58,12 @@ public class MyApplication extends Application {
         super.onCreate();
         mApplication = this;
         Language language = new Language(Language.MODE.AUTO, Locale.ENGLISH);
-        ApiConfig apiConfig = new ApiConfig("http://api.e-toys.cn/api/", MyApiService.class);
+//        BaseResponse.Wrapper wrapper = new BaseResponse.Wrapper("status","msg","data");
+        ApiConfig apiConfig = new ApiConfig("http://api.e-toys.cn/api/", MyApiService.class, null);
         Configuration configuration = new Configuration
                 .Builder()
                 .loggable(true)
+                .logTag("CoreComponent")
                 .language(language)
                 .apiConfig(apiConfig)
                 .build();

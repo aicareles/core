@@ -5,17 +5,15 @@ import android.content.Context;
 import com.heaton.baselib.api.Api;
 import com.heaton.baselib.api.BaseResponse;
 import com.heaton.baselib.api.BaseObserver;
+import com.heaton.baselib.api.RxSchedulers;
 import com.heaton.baselib.base.mvp.BaseMvpPresenter;
 import com.heaton.baselib.bean.UpdateVO;
 import com.heaton.baselib.utils.LogUtils;
-import com.heaton.baselibsample.MyApiService;
+import com.heaton.baselibsample.api.MyApiService;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * author: jerry
@@ -48,9 +46,19 @@ public class LoginPresenter extends BaseMvpPresenter<ILoginContract.ILoginView> 
         map.put("app_id","cn.com.heaton.icoasters");
         map.put("platform","Android");
         apiService.update(map)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(RxSchedulers.io2main())
                 .subscribe(new BaseObserver<UpdateVO>() {
+                    @Override
+                    protected void onSuccess(BaseResponse<UpdateVO> response) {
+                        LogUtils.logi("LoginPresenter>>>[onSuccess]: "+response);
+                    }
+
+                    @Override
+                    protected void onFail(String msg) {
+                        LogUtils.logi("LoginPresenter>>>[onFail]: "+msg);
+                    }
+                });
+                /*.subscribe(new BaseObserver<UpdateVO>() {
                     @Override
                     protected void onRequestStart() {
                         LogUtils.logi("LoginPresenter>>>[onRequestStart]: ");
@@ -64,14 +72,14 @@ public class LoginPresenter extends BaseMvpPresenter<ILoginContract.ILoginView> 
                     }
 
                     @Override
-                    protected void onSuccess(BaseResponse<UpdateVO> response){
-                        LogUtils.logi("LoginPresenter>>>[onSuccess]: "+response.data);
+                    protected void onSuccess(UpdateVO updateVO){
+                        LogUtils.logi("LoginPresenter>>>[onSuccess]: "+updateVO);
                     }
 
                     @Override
                     protected void onFail(String msg) {
                         LogUtils.logi("LoginPresenter>>>[onFail]: "+msg);
                     }
-                });
+                });*/
     }
 }

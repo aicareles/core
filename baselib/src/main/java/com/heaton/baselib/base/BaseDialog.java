@@ -5,15 +5,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.annotation.StyleRes;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 /**
@@ -44,9 +41,8 @@ public abstract class BaseDialog extends Dialog {
         setContentView(view);
         Window window = getWindow();
         if (window != null) {
-            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            //消除弹框白色背景
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
         bindData();
         bindListener();
@@ -62,42 +58,8 @@ public abstract class BaseDialog extends Dialog {
         Toast.makeText(mActivity, resid, Toast.LENGTH_SHORT).show();
     }
 
-    /**
-     * 解决全屏模式下,弹出dialog会弹出底部导航栏
-     * @param view
-     */
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    private void fullScreenImmersive(View view) {
-        int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                //布局位于状态栏下方
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                //全屏
-                View.SYSTEM_UI_FLAG_FULLSCREEN |
-                //隐藏导航栏
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-        if (Build.VERSION.SDK_INT >= 19) {
-            uiOptions |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        } else {
-            uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
-        }
-        view.setSystemUiVisibility(uiOptions);
+    public void toast(String msg){
+        Toast.makeText(mActivity, msg, Toast.LENGTH_SHORT).show();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    @Override
-    public void show() {
-        Window window = getWindow();
-        if (window != null){
-            window.setFlags(
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-            );
-        }
-        super.show();
-        if (window != null){
-            fullScreenImmersive(window.getDecorView());
-            window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-        }
-    }
 }

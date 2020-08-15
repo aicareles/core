@@ -9,10 +9,12 @@ package com.heaton.baselib.api;
 public class ApiConfig {
     private String baseUrl;
     private Class apiServiceCls;
+    private BaseResponse.Wrapper wrapper;
 
-    public ApiConfig(String baseUrl, Class apiServiceCls) {
+    public ApiConfig(String baseUrl, Class apiServiceCls, BaseResponse.Wrapper wrapper) {
         this.baseUrl = baseUrl;
         this.apiServiceCls = apiServiceCls;
+        this.wrapper = wrapper;
     }
 
     public String getBaseUrl() {
@@ -29,5 +31,13 @@ public class ApiConfig {
 
     public void setApiServiceCls(Class apiServiceCls) {
         this.apiServiceCls = apiServiceCls;
+    }
+
+    public BaseResponse.Wrapper getWrapper() {
+        return wrapper;
+    }
+
+    public void setWrapper(BaseResponse.Wrapper wrapper) {
+        this.wrapper = wrapper;
     }
 }

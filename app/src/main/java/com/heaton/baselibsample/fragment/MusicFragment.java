@@ -33,9 +33,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnItemClick;
-import cn.com.superLei.aoparms.annotation.PermissionDenied;
-import cn.com.superLei.aoparms.annotation.PermissionNoAskDenied;
-import cn.com.superLei.aoparms.common.permission.AopPermissionUtils;
 
 /**
  * description $desc$
@@ -317,25 +314,6 @@ public class MusicFragment extends BaseFragment {
             }
         });
 
-    }
-
-    @PermissionDenied
-    public void permissionDenied(int requestCode, List<String> denyList) {
-        if (requestCode == REQUEST_READ_PERMISSIONS) {
-            Log.e(TAG, "permissionDenied>>>:读取权限被拒 " + denyList.toString());
-        } else if (requestCode == REQUEST_RECORD_AUDIO_PERMISSIONS) {
-            Log.e(TAG, "permissionDenied>>>:麦克风权限被拒 " + denyList.toString());
-        }
-    }
-
-    @PermissionNoAskDenied
-    public void permissionNoAskDenied(int requestCode, List<String> denyNoAskList) {
-        if (requestCode == REQUEST_READ_PERMISSIONS) {
-            Log.e(TAG, "permissionNoAskDenied 读取权限被拒,不在提示>>>: " + denyNoAskList.toString());
-        } else if (requestCode == REQUEST_RECORD_AUDIO_PERMISSIONS) {
-            Log.e(TAG, "permissionDenied>>>:麦克风权限被拒,不在提示>>> " + denyNoAskList.toString());
-        }
-        AopPermissionUtils.showGoSetting(getActivity(), "为了更好的体验，建议前往设置页面打开权限");
     }
 
 }

@@ -1,4 +1,4 @@
-package com.heaton.baselibsample;
+package com.heaton.baselibsample.api;
 
 import com.heaton.baselib.api.BaseResponse;
 import com.heaton.baselib.bean.UpdateVO;

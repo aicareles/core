@@ -22,6 +22,7 @@ import com.heaton.baselib.utils.LogUtils;
 import com.heaton.baselib.utils.NotificationUtil;
 import com.heaton.baselib.utils.ThreadUtils;
 import com.heaton.baselib.utils.SPUtils;
+import com.heaton.baselibsample.MainActivity;
 import com.heaton.baselibsample.R;
 import com.heaton.baselibsample.bean.Article;
 import com.heaton.baselibsample.bean.User;
@@ -32,17 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.OnClick;
-import cn.com.superLei.aoparms.annotation.Async;
-import cn.com.superLei.aoparms.annotation.Cache;
-import cn.com.superLei.aoparms.annotation.Permission;
-import cn.com.superLei.aoparms.annotation.PermissionDenied;
-import cn.com.superLei.aoparms.annotation.PermissionNoAskDenied;
-import cn.com.superLei.aoparms.annotation.Prefs;
-import cn.com.superLei.aoparms.annotation.Retry;
-import cn.com.superLei.aoparms.annotation.Safe;
-import cn.com.superLei.aoparms.annotation.Scheduled;
-import cn.com.superLei.aoparms.annotation.SingleClick;
-import cn.com.superLei.aoparms.common.permission.AopPermissionUtils;
 
 /**
  * description $desc$
@@ -75,10 +65,6 @@ public class HomeFragment extends BaseFragment {
         updateVersion();
         //上传操作信息
         UploadManager.uploadStatusInfo(getContext());
-
-        initData();
-
-        initArticle();
 
         initLog();
 
@@ -120,107 +106,11 @@ public class HomeFragment extends BaseFragment {
                 "            \"des\": \"一个帮助你快速实现底部导航的自定义控件。\"}");
     }
 
-    @Permission(value = {Manifest.permission.CAMERA}, rationale = "为了更好的体验，请打开相机权限", requestCode = REQUEST_PERMISSION_CAMERA)
-    public void permission() {
-        Log.e(TAG, "permission: 权限已打开");
-    }
-
-    @PermissionDenied
-    public void permissionDenied(int requestCode, List<String> denyList) {
-        if (requestCode == REQUEST_PERMISSION_CAMERA) {
-            Log.e(TAG, "permissionDenied>>>:相机权限被拒 " + denyList.toString());
-        } else if (requestCode == REQUEST_PERMISSION_WRITE) {
-            Log.e(TAG, "permissionDenied>>>:读写权限被拒 " + denyList.toString());
-        }
-    }
-
-    @PermissionNoAskDenied
-    public void permissionNoAskDenied(int requestCode, List<String> denyNoAskList) {
-        if (requestCode == REQUEST_PERMISSION_CAMERA) {
-            Log.e(TAG, "permissionNoAskDenied 相机权限被拒>>>: " + denyNoAskList.toString());
-        } else if (requestCode == REQUEST_PERMISSION_WRITE) {
-            Log.e(TAG, "permissionDenied>>>:读写权限被拒>>> " + denyNoAskList.toString());
-        }
-        AopPermissionUtils.showGoSetting(getActivity(), "为了更好的体验，建议前往设置页面打开权限");
-    }
-
     public void getArticle() {
         Article article = SPUtils.get(getContext(), "article", new Article());
         Log.e(TAG, "getArticle: " + article.toString());
     }
 
-    @Cache(key = "userList")
-    private ArrayList<User> initData() {
-        ArrayList<User> list = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            User user = new User();
-            user.setName("艾神一不小心:" + i);
-            user.setPassword("密码:" + i);
-            list.add(user);
-        }
-        return list;
-    }
-
-    @Prefs(key = "article")
-    private Article initArticle() {
-        Article article = new Article();
-        article.author = "tony";
-        article.title = "kotlin in action";
-        article.createDate = "2017-01-02";
-        article.content = "just a test...";
-        return article;
-    }
-
-    @Async
-    public void asyn() {
-        Log.e(TAG, "useAync: " + Thread.currentThread().getName());
-    }
-
-    private void asynDelay() {
-        ThreadUtils.asyncDelay(3000, new CallBack() {
-            @Override
-            public void execute() {
-                Log.e(TAG, "asynDelay:"+Thread.currentThread().getName());
-            }
-        });
-    }
-
-    @Safe(callBack = "throwMethod")
-    public void safe() {
-        str.toString();
-    }
-
-    @Safe
-    private void throwMethod(Throwable throwable) {
-        Log.e(TAG, "throwMethod: >>>>>" + throwable.toString());
-    }
-
-    @SingleClick
-    public void getUser() {
-        ArrayList<User> users = ACache.get(getContext()).getAsList("userList", User.class);
-        Log.e(TAG, "getUser: " + users.toString());
-    }
-
-    @Retry(count = 3, delay = 1000, asyn = true, retryCallback = "retryCallback")
-    public boolean retry() {
-        Log.e(TAG, "retryDo: >>>>>>" + Thread.currentThread().getName());
-        return false;
-    }
-
-    @Safe
-    private void retryCallback(boolean result) {
-        Log.e(TAG, "retryCallback: >>>>" + result);
-    }
-
-    @Scheduled(interval = 1000L, count = 10, taskExpiredCallback = "taskExpiredCallback")
-    public void scheduled() {
-        Log.e(TAG, "scheduled: >>>>");
-    }
-
-    @Safe
-    private void taskExpiredCallback() {
-        Log.e(TAG, "taskExpiredCallback: >>>>");
-    }
 
     @Override
     public void onDestroy() {
@@ -234,28 +124,21 @@ public class HomeFragment extends BaseFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.getUser:
-                getUser();
                 break;
             case R.id.getArticle:
                 getArticle();
                 break;
             case R.id.permission:
-                permission();
                 break;
             case R.id.retry:
-                retry();
                 break;
             case R.id.safe:
-                safe();
                 break;
             case R.id.asyn:
-                asyn();
                 break;
             case R.id.asyn_delay:
-                asynDelay();
                 break;
             case R.id.scheduled:
-                scheduled();
                 break;
             case R.id.nav:
                 toActivity(NavigationActivity.class);

@@ -8,10 +8,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.heaton.baselib.app.language.LanguageManager;
 import com.heaton.baselib.base.BaseActivity;
+import com.heaton.baselib.base.recycleview.RecyclerAdapter;
 import com.heaton.baselibsample.MainActivity;
 import com.heaton.baselibsample.R;
 import com.heaton.baselibsample.adapter.LanguageAdapter;

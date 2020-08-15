@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'android-aspectjx'
 // 依赖插件脚本
 apply from: 'tinker-support.gradle'
 //apply plugin: 'jiagu'
@@ -99,7 +98,6 @@ dependencies {
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
-    implementation 'cn.com.superLei:aop-arms:1.0.4'
 //    implementation 'cn.com.superLei:blelibrary:3.0.0'
     implementation 'com.github.aicareles.components:musiclib:v1.0.9'
 //    implementation 'com.github.aicareles:core:v1.0.9'

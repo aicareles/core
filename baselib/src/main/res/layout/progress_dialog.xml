@@ -4,8 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:background="@drawable/progress_dialog_bg"
-    android:minWidth="280dip">
+    android:minWidth="320dp">
 
     <LinearLayout
         android:id="@+id/body"

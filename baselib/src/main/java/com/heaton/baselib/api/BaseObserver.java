@@ -4,9 +4,6 @@ import android.accounts.NetworkErrorException;
 import android.app.ProgressDialog;
 import android.content.Context;
 
-import com.heaton.baselib.api.BaseResponse;
-import com.heaton.baselib.api.ResultException;
-
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeoutException;
@@ -31,8 +28,8 @@ public abstract class BaseObserver<T> implements Observer<BaseResponse<T>> {
 
     @Override
     public void onNext(BaseResponse<T> response) {
-        onRequestEnd();
         onSuccess(response);
+        onRequestEnd();
     }
 
     @Override

@@ -64,7 +64,7 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-//        toActivity(LoginActivity.class);
+        toActivity(LoginActivity.class);
 
 //        Log.e(TAG, "onCreate: "+ss.toString());
 

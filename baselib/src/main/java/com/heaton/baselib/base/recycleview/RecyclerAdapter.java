@@ -1,11 +1,14 @@
 package com.heaton.baselib.base.recycleview;
 
 import android.content.Context;
+import android.support.annotation.IdRes;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -21,6 +24,8 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
 
     private OnItemClickListener<T> mOnItemClickListener;
     private OnItemLongClickListener<T> mOnItemLongClickListener;
+    private OnItemChildClickListener<T> mOnItemChildClickListener;
+    private LinkedHashSet<Integer> childClickViewIds;
 
     public void setOnItemClickListener(OnItemClickListener<T> onItemClickListener) {
         this.mOnItemClickListener = onItemClickListener;
@@ -28,6 +33,17 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
 
     public void setOnItemLongClickListener(OnItemLongClickListener<T> onItemLongClickListener) {
         this.mOnItemLongClickListener = onItemLongClickListener;
+    }
+
+    public void setOnItemChildClickListener(OnItemChildClickListener<T> onItemChildClickListener) {
+        this.mOnItemChildClickListener = onItemChildClickListener;
+    }
+
+    public void bindChildClickViewIds(@IdRes int... viewIds){
+        childClickViewIds = new LinkedHashSet<>();
+        for (int id: viewIds) {
+            childClickViewIds.add(id);
+        }
     }
 
     public RecyclerAdapter(Context context, List<T> datas) {
@@ -50,13 +66,7 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
         return viewHolder.getAdapterPosition();
     }
 
-    protected boolean isEnabled(int viewType) {
-        return true;
-    }
-
-
     protected void setListener(final ViewGroup parent, final RecyclerViewHolder viewHolder, int viewType) {
-        if (!isEnabled(viewType)) return;
         viewHolder.getConvertView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,8 +76,6 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
                 }
             }
         });
-
-
         viewHolder.getConvertView().setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -78,6 +86,20 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
                 return false;
             }
         });
+        if (childClickViewIds != null && !childClickViewIds.isEmpty()){
+            for (int id: childClickViewIds){
+                View view = viewHolder.getView(id);
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (mOnItemChildClickListener != null){
+                            int position = getPosition(viewHolder);
+                            mOnItemChildClickListener.onItemChildClick(parent, v, mDatas.get(position), position);
+                        }
+                    }
+                });
+            }
+        }
     }
 
     @Override
@@ -100,6 +122,10 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
 
     public interface OnItemLongClickListener<T> {
         boolean onItemLongClick(ViewGroup parent, View view, T t, int position);
+    }
+
+    public interface OnItemChildClickListener<T> {
+        void onItemChildClick(ViewGroup parent, View view, T t, int position);
     }
 
 }

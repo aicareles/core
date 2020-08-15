@@ -1,5 +1,8 @@
 package com.heaton.baselib.api;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -23,11 +26,15 @@ public class Api {
     public static void init(ApiConfig apiConfig) {
         mOkHttpClient = OkHttpManager.getOkHttpClient();
         //设置使用okhttp网络请求
+        /*Gson gson = new GsonBuilder()
+                .registerTypeAdapter(BaseResponse.class, new BaseResponse.JsonAdapter(apiConfig.getWrapper()))
+                .create();*/
         Retrofit retrofit = new Retrofit.Builder()
                 //设置使用okhttp网络请求
                 .client(mOkHttpClient)
                 .baseUrl(apiConfig.getBaseUrl())
                 .addConverterFactory(GsonConverterFactory.create())
+//                .addConverterFactory(ResponseConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
         apiService = retrofit.create(apiConfig.getApiServiceCls());
@@ -43,4 +50,5 @@ public class Api {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
     }
+
 }

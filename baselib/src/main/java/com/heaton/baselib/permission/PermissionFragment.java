@@ -43,7 +43,7 @@ public class PermissionFragment extends DialogFragment {
      * @param permissions Permission List
      * @param iPermission Interface
      */
-    public void requestPermissions(FragmentActivity activity, String[] permissions, String rationale, IPermission iPermission) {
+    public void requestPermission(FragmentActivity activity, String[] permissions, String rationale, IPermission iPermission) {
         permissionListener = iPermission;
         /**弄一个看不见的Fragment，来处理回调*/
         show(activity.getSupportFragmentManager(), "");
@@ -85,13 +85,13 @@ public class PermissionFragment extends DialogFragment {
                     .shouldShowRequestPermissionRationale(activity, permissions);
             if (TextUtils.isEmpty(rationale)){
                 //request permissions
-                ActivityCompat.requestPermissions(activity, permissions, requestCode);
+                requestPermissions(permissions, requestCode);
             }else {
                 if (shouldShowRequestPermissionRationale){
                     showRequestPermissionRationale(activity, permissions,rationale);
                 }else {
                     //request permissions
-                    ActivityCompat.requestPermissions(activity, permissions, requestCode);
+                    requestPermissions(permissions, requestCode);
                 }
             }
         }

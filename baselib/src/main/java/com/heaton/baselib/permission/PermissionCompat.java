@@ -18,6 +18,6 @@ public class PermissionCompat {
             return;
         }
         PermissionFragment fragment = PermissionFragment.newInstance();
-        fragment.requestPermissions(activity, permission, rationale, listener);
+        fragment.requestPermission(activity, permission, rationale, listener);
     }
 }

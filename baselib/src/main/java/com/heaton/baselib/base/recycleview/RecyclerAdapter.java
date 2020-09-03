@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.heaton.baselib.utils.ViewUtils;
+
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -70,6 +72,7 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
         viewHolder.getConvertView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (ViewUtils.filter(500))return;
                 if (mOnItemClickListener != null) {
                     int position = getPosition(viewHolder);
                     mOnItemClickListener.onItemClick(parent, v, mDatas.get(position), position);
@@ -92,6 +95,7 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        if (ViewUtils.filter(500))return;
                         if (mOnItemChildClickListener != null){
                             int position = getPosition(viewHolder);
                             mOnItemChildClickListener.onItemChildClick(parent, v, mDatas.get(position), position);

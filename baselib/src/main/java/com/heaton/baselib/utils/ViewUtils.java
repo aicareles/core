@@ -36,6 +36,19 @@ public class ViewUtils {
         view.draw(canvas);
         return bitmap;
     }
+
+    /**
+     * 过滤重复点击   true代表连续点击
+     */
+    private static long lastClickTime = 0;
+    public static boolean filter(long duration){
+        long time = System.currentTimeMillis();
+        if (time - lastClickTime < duration){
+            return true;
+        }
+        lastClickTime = time;
+        return false;
+    }
 }
 
 

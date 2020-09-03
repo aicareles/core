@@ -23,10 +23,10 @@ import java.util.Map;
 
 public class LanguageManager {
 
-    private static Language mLanguage;
+    private static Language mLanguage = new Language(Language.MODE.AUTO);
     private static Map<String, Locale> mSupportLanguages;
 
-    public static void init(Language language){
+    public static void init(Context context, Language language){
         mLanguage = language;
         final List<Locale> locales = language.getLocales();
         mSupportLanguages = new HashMap<String, Locale>(locales.size()) {{
@@ -34,6 +34,13 @@ public class LanguageManager {
                 put(locale.getLanguage(), locale);
             }
         }};
+        updateSystemLocales(context);
+    }
+
+    //更新当前应用的全局语言环境，否则context获取到的资源有问题
+    private static void updateSystemLocales(Context context){
+        String saveLanguage = LanguageManager.getSaveLanguage(context);
+        applyLanguage(context, saveLanguage);
     }
 
     /**

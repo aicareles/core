@@ -22,6 +22,7 @@ import com.heaton.baselib.utils.LogUtils;
 import com.heaton.baselib.utils.NotificationUtil;
 import com.heaton.baselib.utils.ThreadUtils;
 import com.heaton.baselib.utils.SPUtils;
+import com.heaton.baselib.utils.ToastUtil;
 import com.heaton.baselibsample.MainActivity;
 import com.heaton.baselibsample.R;
 import com.heaton.baselibsample.bean.Article;
@@ -124,9 +125,11 @@ public class HomeFragment extends BaseFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.getUser:
+                ToastUtil.show(R.string.test);
                 break;
             case R.id.getArticle:
-                getArticle();
+//                getArticle();
+                toast(R.string.test);
                 break;
             case R.id.permission:
                 break;

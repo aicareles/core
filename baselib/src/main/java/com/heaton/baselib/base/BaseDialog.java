@@ -9,9 +9,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StyleRes;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Toast;
+
+import com.heaton.baselib.utils.ToastUtil;
 
 /**
  * 对话框基类
@@ -55,11 +55,11 @@ public abstract class BaseDialog extends Dialog {
     protected void bindListener(){}
 
     public void toast(int resid){
-        Toast.makeText(mActivity, resid, Toast.LENGTH_SHORT).show();
+        ToastUtil.show(resid);
     }
 
     public void toast(String msg){
-        Toast.makeText(mActivity, msg, Toast.LENGTH_SHORT).show();
+        ToastUtil.show(msg);
     }
 
 }

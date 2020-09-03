@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.heaton.baselib.utils.ToastUtil;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
@@ -69,5 +71,13 @@ public abstract class BaseDialogFragment extends DialogFragment {
 
     protected View inflate(int resId) {
         return LayoutInflater.from(getActivity()).inflate(resId, null);
+    }
+
+    public void toast(int resid){
+        ToastUtil.show(resid);
+    }
+
+    public void toast(String msg){
+        ToastUtil.show(msg);
     }
 }

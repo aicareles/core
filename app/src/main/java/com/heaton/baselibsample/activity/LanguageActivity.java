@@ -3,6 +3,7 @@ package com.heaton.baselibsample.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import com.heaton.baselib.app.language.LanguageManager;
 import com.heaton.baselib.base.BaseActivity;
 import com.heaton.baselib.base.recycleview.RecyclerAdapter;
+import com.heaton.baselib.utils.LogUtils;
 import com.heaton.baselibsample.MainActivity;
 import com.heaton.baselibsample.R;
 import com.heaton.baselibsample.adapter.LanguageAdapter;
@@ -66,6 +68,7 @@ public class LanguageActivity extends BaseActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
         saveLanguage = LanguageManager.getSaveLanguage(this);
+        LogUtils.logi("LanguageActivity>>>[bindData]: "+saveLanguage);
 
 
         List<String> values = new ArrayList<>(languages.values());
@@ -88,7 +91,14 @@ public class LanguageActivity extends BaseActivity {
             adapter.notifyDataSetChanged();
             if (!TextUtils.equals(saveLanguage, languages.get(lang))){
                 LanguageManager.setSaveLanguage(this, languages.get(lang));
-                restartApp(this, MainActivity.class);
+                LogUtils.logi("LanguageActivity>>>[bindListener]: "+languages.get(lang));
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        restartApp(LanguageActivity.this, MainActivity.class);
+                    }
+                }, 1000);
+
             }
         });
     }

@@ -19,13 +19,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.heaton.baselib.R;
 import com.heaton.baselib.app.language.LanguageManager;
 import com.heaton.baselib.permission.IPermission;
 import com.heaton.baselib.permission.PermissionCompat;
 import com.heaton.baselib.utils.GlobalStatusBarUtil;
+import com.heaton.baselib.utils.ToastUtil;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -257,11 +256,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void toast(int resid){
-        Toast.makeText(this, resid, Toast.LENGTH_SHORT).show();
+        ToastUtil.show(resid);
     }
 
     public void toast(String msg){
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        ToastUtil.show(msg);
     }
 
     public Activity getActivity(){

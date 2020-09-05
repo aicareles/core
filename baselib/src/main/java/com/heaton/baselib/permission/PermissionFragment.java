@@ -5,13 +5,19 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+
 import com.heaton.baselib.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,11 +64,6 @@ public class PermissionFragment extends DialogFragment {
         if (getDialog().getWindow() != null) {
             getDialog().getWindow().setDimAmount(0);
         }
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         requestPermissionInner(permissions);
     }
 
@@ -83,6 +84,7 @@ public class PermissionFragment extends DialogFragment {
         } else {
             boolean shouldShowRequestPermissionRationale = PermissionUtils
                     .shouldShowRequestPermissionRationale(activity, permissions);
+
             if (TextUtils.isEmpty(rationale)){
                 //request permissions
                 requestPermissions(permissions, requestCode);
@@ -104,14 +106,13 @@ public class PermissionFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        ActivityCompat.requestPermissions(activity, permissions, requestCode);
+                        requestPermissions(permissions, requestCode);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-
                     }
                 })
                 .create().show();

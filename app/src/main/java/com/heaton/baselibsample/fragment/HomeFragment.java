@@ -125,7 +125,8 @@ public class HomeFragment extends BaseFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.getUser:
-                ToastUtil.show(R.string.test);
+//                ToastUtil.show(R.string.test);
+                new Dialog1().show(getFragmentManager(),"");
                 break;
             case R.id.getArticle:
 //                getArticle();

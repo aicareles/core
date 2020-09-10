@@ -12,9 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.heaton.baselib.callback.ActivityResultCallback;
 import com.heaton.baselib.callback.HandleBackInterface;
 import com.heaton.baselib.permission.IPermission;
 import com.heaton.baselib.permission.PermissionCompat;
+import com.heaton.baselib.utils.HandlerUtils;
 import com.heaton.baselib.utils.ToastUtil;
 
 import butterknife.ButterKnife;
@@ -61,12 +63,30 @@ public abstract class BaseFragment extends Fragment implements HandleBackInterfa
         startActivity(intent);
     }
 
+    public void toActivityForResult(Class cl, ActivityResultCallback callback){
+        ActivityResult result = new ActivityResult(this);
+        result.start(cl, callback);
+    }
+
+    public void toActivityForResult(Intent intent, ActivityResultCallback callback){
+        ActivityResult result = new ActivityResult(this);
+        result.start(intent, callback);
+    }
+
     public void toast(int resid){
         ToastUtil.show(resid);
     }
 
     public void toast(String msg){
         ToastUtil.show(msg);
+    }
+
+    public void setTimeout(long delay, Runnable runnable){
+        HandlerUtils.setTimeout(1, delay, runnable);
+    }
+
+    public void removeTimeout(){
+        HandlerUtils.removeTimeout(1);
     }
 
     @Override

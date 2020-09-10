@@ -21,9 +21,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import com.heaton.baselib.R;
 import com.heaton.baselib.app.language.LanguageManager;
+import com.heaton.baselib.callback.ActivityResultCallback;
 import com.heaton.baselib.permission.IPermission;
 import com.heaton.baselib.permission.PermissionCompat;
 import com.heaton.baselib.utils.GlobalStatusBarUtil;
+import com.heaton.baselib.utils.HandlerUtils;
 import com.heaton.baselib.utils.ToastUtil;
 
 import butterknife.ButterKnife;
@@ -132,6 +134,21 @@ public abstract class BaseActivity extends AppCompatActivity {
         Intent intent = new Intent(this, cl);
         intent.putExtra(cl.getSimpleName(), bundle);
         startActivity(intent);
+    }
+
+    public IntentParams toActivityParams(Class cl){
+        Intent intent = new Intent(this, cl);
+        return new IntentParams(this, intent);
+    }
+
+    public void toActivityForResult(Class cl, ActivityResultCallback callback){
+        ActivityResult result = new ActivityResult(this);
+        result.start(cl, callback);
+    }
+
+    public void toActivityForResult(Intent intent, ActivityResultCallback callback){
+        ActivityResult result = new ActivityResult(this);
+        result.start(intent, callback);
     }
 
     public View inflate(int layoutIds) {
@@ -261,6 +278,14 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void toast(String msg){
         ToastUtil.show(msg);
+    }
+
+    public void setTimeout(long delay, Runnable runnable){
+        HandlerUtils.setTimeout(0, delay, runnable);
+    }
+
+    public void removeTimeout(){
+        HandlerUtils.removeTimeout(0);
     }
 
     public Activity getActivity(){

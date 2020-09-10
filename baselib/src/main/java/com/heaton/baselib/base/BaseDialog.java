@@ -11,6 +11,7 @@ import android.support.annotation.StyleRes;
 import android.view.View;
 import android.view.Window;
 
+import com.heaton.baselib.utils.HandlerUtils;
 import com.heaton.baselib.utils.ToastUtil;
 
 /**
@@ -30,7 +31,6 @@ public abstract class BaseDialog extends Dialog {
 
     public BaseDialog(@NonNull Context context, @StyleRes int themeResId) {
         super(context, themeResId);
-        setOwnerActivity((Activity) context);
         this.mActivity = (Activity) context;
     }
 
@@ -60,6 +60,14 @@ public abstract class BaseDialog extends Dialog {
 
     public void toast(String msg){
         ToastUtil.show(msg);
+    }
+
+    public void setTimeout(long delay, Runnable runnable){
+        HandlerUtils.setTimeout(2, delay, runnable);
+    }
+
+    public void removeTimeout(){
+        HandlerUtils.removeTimeout(2);
     }
 
 }

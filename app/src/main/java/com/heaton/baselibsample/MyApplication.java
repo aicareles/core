@@ -10,6 +10,9 @@ import com.heaton.baselib.Configuration;
 import com.heaton.baselib.api.ApiConfig;
 import com.heaton.baselib.api.BaseResponse;
 import com.heaton.baselib.app.language.Language;
+import com.heaton.baselib.crash.CrashHandler;
+import com.heaton.baselib.crash.CrashInfo;
+import com.heaton.baselibsample.activity.CrashActivity;
 import com.heaton.baselibsample.api.MyApiService;
 import com.tencent.bugly.beta.Beta;
 import com.tencent.bugly.beta.interfaces.BetaPatchListener;
@@ -68,6 +71,7 @@ public class MyApplication extends Application {
                 .apiConfig(apiConfig)
                 .build();
         BaseCoreAPI.init(this, configuration);
+        initCrash();
 
 //        Bugly.init(this, "69755c9a5d", true);
         Beta.betaPatchListener = new BetaPatchListener() {
@@ -106,6 +110,19 @@ public class MyApplication extends Application {
 
             }
         };
+    }
+
+    private void initCrash() {
+        new CrashHandler.Builder()
+                .targetClass(CrashActivity.class)
+                .crashUploader(new CrashHandler.CrashUploader() {
+                    @Override
+                    public void crashMessage(CrashInfo crashInfo) {
+                        Log.e(TAG, "uploadCrashMessage: "+crashInfo.toString());
+                    }
+                })
+                .build()
+                .init(getApplicationContext());
     }
 
     @Override

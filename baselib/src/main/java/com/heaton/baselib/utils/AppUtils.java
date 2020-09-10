@@ -433,6 +433,10 @@ public class AppUtils {
         return AppUtils.getAppMetaData(context, Constance.APP.CHANNEL).equals("google");
     }
 
+    public static boolean isServerChannel(Context context){
+        return AppUtils.getAppMetaData(context, Constance.APP.CHANNEL).equals("server");
+    }
+
     //判断某个权限是否打开
     public static boolean isPermission(Context context, String permission) {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.M || ContextCompat.checkSelfPermission(context, permission) == PERMISSION_GRANTED;

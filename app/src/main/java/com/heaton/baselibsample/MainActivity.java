@@ -6,25 +6,21 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+
 import com.heaton.baselib.base.BaseActivity;
 import com.heaton.baselib.callback.CallBackUI;
-import com.heaton.baselib.crash.CrashHandler;
-import com.heaton.baselib.crash.CrashInfo;
 import com.heaton.baselib.permission.IPermission;
+import com.heaton.baselib.utils.HandlerUtils;
 import com.heaton.baselib.utils.LogUtils;
 import com.heaton.baselib.utils.ThreadUtils;
 import com.heaton.baselib.widget.NavigationBar;
-import com.heaton.baselibsample.activity.CrashActivity;
 import com.heaton.baselibsample.fragment.HomeFragment;
 import com.heaton.baselibsample.fragment.MusicFragment;
 import com.heaton.baselibsample.fragment.SettingFragment;
-import com.heaton.baselibsample.mvp.LoginActivity;
-
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import butterknife.BindView;
 import io.reactivex.disposables.Disposable;
+
 
 public class MainActivity extends BaseActivity {
 
@@ -43,7 +39,14 @@ public class MainActivity extends BaseActivity {
         }
         super.onCreate(savedInstanceState);
 
-        initCrash();
+//        toActivityParams(LanguageActivity.class).put("a", 1).put("b", "b").start();
+
+        /*toActivityForResult(LanguageActivity.class, new ActivityResultCallback() {
+            @Override
+            public void onActivityResult(int resultCode, Intent data) {
+                LogUtils.logi("MainActivity>>>[onActivityResult]: "+resultCode+"---"+data.getStringExtra("data"));
+            }
+        });*/
 
         ThreadUtils.asyncCallback(new CallBackUI<Boolean>() {
             @Override
@@ -64,16 +67,26 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-//        toActivity(LoginActivity.class);
-
-//        Log.e(TAG, "onCreate: "+ss.toString());
-
         requestPermission(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, "sss", new IPermission() {
             @Override
             public void permissionGranted() {
                 LogUtils.logi("MainActivity>>>[permissionGranted]: ");
             }
         });
+
+        showProgressDialog("扫描中...");
+        setTimeout(4000, () -> {
+            LogUtils.logi("MainActivity>>>[onCreate]: 哈哈哈");
+            toast("扫描超时，没有扫描到任何设备");
+            dismissProgressDialog();
+        });
+
+        ThreadUtils.uiDelay(()->{
+            removeTimeout();
+            dismissProgressDialog();
+            toast("已扫描到设备");
+        },2000);
+
     }
 
     @Override
@@ -106,18 +119,5 @@ public class MainActivity extends BaseActivity {
     public static boolean getDarkModeStatus(Context context) {
         int mode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         return mode == Configuration.UI_MODE_NIGHT_YES;
-    }
-
-    private void initCrash() {
-        new CrashHandler.Builder()
-                .targetClass(CrashActivity.class)
-                .crashUploader(new CrashHandler.CrashUploader() {
-                    @Override
-                    public void crashMessage(CrashInfo crashInfo) {
-                        Log.e(TAG, "uploadCrashMessage: "+crashInfo.toString());
-                    }
-                })
-                .build()
-                .init(getApplicationContext());
     }
 }

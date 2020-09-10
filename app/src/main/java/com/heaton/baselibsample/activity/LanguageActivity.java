@@ -86,7 +86,6 @@ public class LanguageActivity extends BaseActivity {
     protected void bindListener() {
         super.bindListener();
         adapter.setOnItemClickListener((parent, view, lang, position) -> {
-//            saveLanguage = languages.get(lang);
             adapter.setPosition(position);
             adapter.notifyDataSetChanged();
             if (!TextUtils.equals(saveLanguage, languages.get(lang))){
@@ -104,7 +103,7 @@ public class LanguageActivity extends BaseActivity {
     }
 
     //重启APP
-    public static void restartApp(Activity activity, Class<?> homeClass) {
+    public void restartApp(Activity activity, Class<?> homeClass) {
         Intent intent = new Intent(activity, homeClass);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         activity.startActivity(intent);

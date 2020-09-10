@@ -24,6 +24,8 @@ import io.reactivex.disposables.Disposable;
 
 public class MainActivity extends BaseActivity {
 
+    private String[] permission = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
     @BindView(R.id.navigationBar)
     NavigationBar navigationBar;
 //    private String ss = null;
@@ -67,7 +69,7 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        requestPermission(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, "sss", new IPermission() {
+        requestPermission(permission, "拍照需要访问摄像头权限", new IPermission() {
             @Override
             public void permissionGranted() {
                 LogUtils.logi("MainActivity>>>[permissionGranted]: ");

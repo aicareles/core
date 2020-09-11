@@ -8,12 +8,14 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.heaton.baselib.base.BaseActivity;
+import com.heaton.baselib.callback.ActivityResultCallback;
 import com.heaton.baselib.callback.CallBackUI;
 import com.heaton.baselib.permission.IPermission;
 import com.heaton.baselib.utils.HandlerUtils;
 import com.heaton.baselib.utils.LogUtils;
 import com.heaton.baselib.utils.ThreadUtils;
 import com.heaton.baselib.widget.NavigationBar;
+import com.heaton.baselibsample.activity.LanguageActivity;
 import com.heaton.baselibsample.fragment.HomeFragment;
 import com.heaton.baselibsample.fragment.MusicFragment;
 import com.heaton.baselibsample.fragment.SettingFragment;
@@ -55,6 +57,7 @@ public class MainActivity extends BaseActivity {
             public void onPreExecute(Disposable d) {
                 super.onPreExecute(d);
                 Log.e(TAG, "onPreExecute: ");
+                showProgressDialog("下载中...");
             }
 
             @Override

@@ -89,4 +89,9 @@
         android:layout_height="wrap_content"
         android:text="底部dialog"/>
 
+    <com.heaton.baselib.widget.KeyBoardEditText
+        android:id="@+id/et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
 </am.widget.wraplayout.WrapLayout>

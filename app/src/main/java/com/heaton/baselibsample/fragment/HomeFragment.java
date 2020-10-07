@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -23,6 +24,7 @@ import com.heaton.baselib.utils.NotificationUtil;
 import com.heaton.baselib.utils.ThreadUtils;
 import com.heaton.baselib.utils.SPUtils;
 import com.heaton.baselib.utils.ToastUtil;
+import com.heaton.baselib.widget.KeyBoardEditText;
 import com.heaton.baselibsample.MainActivity;
 import com.heaton.baselibsample.R;
 import com.heaton.baselibsample.bean.Article;
@@ -33,6 +35,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -44,6 +47,8 @@ public class HomeFragment extends BaseFragment {
     private static final String TAG = "HomeFragment";
     public static final int REQUEST_PERMISSION_WRITE = 2;
     public static final int REQUEST_PERMISSION_CAMERA = 3;
+    @BindView(R.id.et)
+    KeyBoardEditText editText;
     private String str;
 
     public static HomeFragment newInstance() {
@@ -73,16 +78,25 @@ public class HomeFragment extends BaseFragment {
             NotificationUtil.enableNotificationToSet(getContext());
         }
 
+        editText.setOnKeyBoardHideListener(new KeyBoardEditText.OnKeyBoardHideListener() {
+            @Override
+            public void onKeyHide(int keyCode, KeyEvent event) {
+                LogUtils.logi("HomeFragment>>>[onKeyHide]: "+keyCode+"---"+event.toString());
+            }
+        });
+
+
     }
 
     private void updateVersion() {
         String channel = AppUtils.getAppMetaData(getContext(), "HEATON_CHANNEL");
         if (channel.equals("google")){
-            new UpdateManager.Builder()
+            /*new UpdateManager.Builder()
                     .iconLarge(R.mipmap.ic_launcher)
                     .iconSmall(R.mipmap.ic_launcher)
                     .build(getActivity())
-                    .versionUpdate();
+                    .versionUpdate();*/
+            new UpdateManager(getActivity()).versionUpdate();
         }
     }
 

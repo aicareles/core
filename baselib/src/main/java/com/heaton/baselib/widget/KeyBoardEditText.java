@@ -5,6 +5,8 @@ import android.support.v7.widget.AppCompatEditText;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 
+import com.heaton.baselib.utils.LogUtils;
+
 /**
  * author: jerry
  * date: 20-8-8
@@ -29,6 +31,7 @@ public class KeyBoardEditText extends AppCompatEditText {
 
     @Override
     public boolean onKeyPreIme(int keyCode, KeyEvent event) {
+        LogUtils.logi("KeyBoardEditText>>>[onKeyPreIme]: ");
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == 1) {
             super.onKeyPreIme(keyCode, event);
             onKeyBoardHideListener.onKeyHide(keyCode, event);

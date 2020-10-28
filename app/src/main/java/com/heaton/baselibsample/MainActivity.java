@@ -30,7 +30,7 @@ public class MainActivity extends BaseActivity {
 
     @BindView(R.id.navigationBar)
     NavigationBar navigationBar;
-//    private String ss = null;
+    private String ss = null;
 //    private String ss = "修复后的数据";
 
     @Override

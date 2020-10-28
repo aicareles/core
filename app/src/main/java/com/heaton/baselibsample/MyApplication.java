@@ -114,13 +114,13 @@ public class MyApplication extends Application {
 
     private void initCrash() {
         new CrashHandler.Builder()
-                .targetClass(CrashActivity.class)
-                .crashUploader(new CrashHandler.CrashUploader() {
+//                .targetClass(CrashActivity.class)
+                /*.crashUploader(new CrashHandler.CrashUploader() {
                     @Override
                     public void crashMessage(CrashInfo crashInfo) {
                         Log.e(TAG, "uploadCrashMessage: "+crashInfo.toString());
                     }
-                })
+                })*/
                 .build()
                 .init(getApplicationContext());
     }

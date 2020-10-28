@@ -34,11 +34,10 @@ public class LanguageManager {
                 put(locale.getLanguage(), locale);
             }
         }};
-        updateSystemLocales(context);
     }
 
     //更新当前应用的全局语言环境，否则context获取到的资源有问题
-    private static void updateSystemLocales(Context context){
+    public static void updateSystemLocales(Context context){
         String saveLanguage = LanguageManager.getSaveLanguage(context);
         applyLanguage(context, saveLanguage);
     }

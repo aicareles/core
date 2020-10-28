@@ -11,7 +11,7 @@ import java.util.Date;
  * description $desc$
  * created by jerry on 2019/3/27.
  */
-public class DataUtil {
+public class DateUtil {
 
     //切割字符串
     public static String getData(String date) {

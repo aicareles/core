@@ -55,7 +55,7 @@ public abstract class BaseDialog extends Dialog {
     protected void bindListener(){}
 
     public void toast(int resid){
-        ToastUtil.show(resid);
+        ToastUtil.show(getContext(),resid);
     }
 
     public void toast(String msg){

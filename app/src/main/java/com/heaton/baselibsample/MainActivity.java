@@ -43,6 +43,8 @@ public class MainActivity extends BaseActivity {
         }
         super.onCreate(savedInstanceState);
 
+        toast(R.string.test);
+
 //        toActivityParams(LanguageActivity.class).put("a", 1).put("b", "b").start();
 
         /*toActivityForResult(LanguageActivity.class, new ActivityResultCallback() {

@@ -273,7 +273,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void toast(int resid){
-        ToastUtil.show(resid);
+        ToastUtil.show(getBaseContext(), resid);
     }
 
     public void toast(String msg){

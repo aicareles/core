@@ -1,5 +1,6 @@
 package com.heaton.baselib.utils;
 
+import android.content.Context;
 import android.widget.Toast;
 
 import com.heaton.baselib.BaseCoreAPI;
@@ -13,18 +14,20 @@ public class ToastUtil {
     private static Toast mToast;
 
     public static void show(String msg) {
-        if (mToast == null) {
-            mToast = Toast.makeText(BaseCoreAPI.getContext(), msg, Toast.LENGTH_SHORT);
-        } else {
-            mToast.setText(msg);
-            mToast.setDuration(Toast.LENGTH_SHORT);
-        }
-        mToast.show();
+        show(BaseCoreAPI.getContext(), msg);
     }
 
     public static void show(int msg) {
+        show(BaseCoreAPI.getContext(), msg);
+    }
+
+    public static void show(Context context, int msg) {
+        show(context, context.getString(msg));
+    }
+
+    public static void show(Context context, String msg) {
         if (mToast == null) {
-            mToast = Toast.makeText(BaseCoreAPI.getContext(), msg, Toast.LENGTH_SHORT);
+            mToast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
         } else {
             mToast.setText(msg);
             mToast.setDuration(Toast.LENGTH_SHORT);

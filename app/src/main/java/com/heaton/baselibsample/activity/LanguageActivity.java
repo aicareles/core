@@ -7,16 +7,10 @@ import android.os.Handler;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.heaton.baselib.app.language.LanguageManager;
 import com.heaton.baselib.base.BaseActivity;
-import com.heaton.baselib.base.recycleview.RecyclerAdapter;
 import com.heaton.baselib.utils.LogUtils;
 import com.heaton.baselibsample.MainActivity;
 import com.heaton.baselibsample.R;
@@ -35,10 +29,6 @@ import butterknife.BindView;
  */
 public class LanguageActivity extends BaseActivity {
     private static final String TAG = "LanguageActivity";
-    @BindView(R.id.toolbar_title)
-    TextView toolbarTitle;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     private LanguageAdapter adapter;
@@ -61,8 +51,6 @@ public class LanguageActivity extends BaseActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void bindData() {
-
-        toolbarTitle.setText("语言");
 
         adapter = new LanguageAdapter(this, new ArrayList<>(languages.keySet()));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

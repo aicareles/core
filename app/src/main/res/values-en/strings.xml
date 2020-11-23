@@ -3,4 +3,6 @@
     <string name="btn_sure">OK</string>
     <string name="btn_cancel">Cancel</string>
     <string name="test">hahahhahahaha</string>
+    <string name="getArticle">getArticle</string>
+    <string name="language">Language</string>
 </resources>

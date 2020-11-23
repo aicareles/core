@@ -50,4 +50,14 @@
         <attr name="tabItemLayout" format="integer|reference"/>
         <attr name="navigateTabTextSize" format="dimension|reference"/>
     </declare-styleable>
+
+
+    <!--<declare-styleable name="TitlebarView">
+        <attr name="leftDrawable" format="reference"/>
+        <attr name="centerTitle" format="string"/>
+        <attr name="centerTextColor" format="color|reference"/>
+        <attr name="rightText" format="string"/>
+        <attr name="rightTextColor" format="color|reference"/>
+        <attr name="rightDrawable" format="reference"/>
+    </declare-styleable>-->
 </resources>

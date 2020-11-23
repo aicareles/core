@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.LocaleList;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
 import com.heaton.baselib.Constance;
@@ -26,8 +27,9 @@ public class LanguageManager {
     private static Language mLanguage = new Language(Language.MODE.AUTO);
     private static Map<String, Locale> mSupportLanguages;
 
-    public static void init(Context context, Language language){
+    public static void init(Context context, boolean langable, Language language){
         mLanguage = language;
+        mLanguage.setEnable(langable);
         final List<Locale> locales = language.getLocales();
         mSupportLanguages = new HashMap<String, Locale>(locales.size()) {{
             for (Locale locale: locales) {
@@ -36,18 +38,15 @@ public class LanguageManager {
         }};
     }
 
-    //更新当前应用的全局语言环境，否则context获取到的资源有问题
-    public static void updateSystemLocales(Context context){
-        String saveLanguage = LanguageManager.getSaveLanguage(context);
-        applyLanguage(context, saveLanguage);
-    }
-
     /**
      * 初始化语言
      * @param context
      * @return
      */
     public static Context attachBaseContext(Context context) {
+        if (!mLanguage.isEnable()){
+            return context;
+        }
         String saveLanguage = LanguageManager.getSaveLanguage(context);
         LogUtils.logi("当前语言:>>>"+saveLanguage);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -64,14 +63,17 @@ public class LanguageManager {
      * 1.若已设置过则获取设置过的语言
      * 2.若未设置:
      *    1.若为跟随系统(Language.MODE.AUTO): 返回当前系统语言
-     *    2.若为自定义(Language.MODE.CUSTOM): 返回自定义的默认语言,若未设置,则默认为中文
+     *    2.若为自定义(Language.MODE.CUSTOM): 返回自定义的默认语言,若未设置,则默认为英文
      *
      * @return 语言
      */
     public static String getSaveLanguage(Context context) {
+        String saveLan = SPUtils.get(context, Constance.SP.LANGUAGE, "");
+        if (!TextUtils.isEmpty(saveLan)){
+            return saveLan;
+        }
         //获取首选语言
-        String preferredLanguage = getPreferredLanguage().getLanguage();
-        return SPUtils.get(context, Constance.SP.LANGUAGE, preferredLanguage);
+        return getPreferredLanguage().getLanguage();
     }
 
     /**
@@ -87,15 +89,15 @@ public class LanguageManager {
     private static Context createConfigurationResources(Context context, String language) {
         Resources resources = context.getResources();
         Configuration configuration = resources.getConfiguration();
-        Locale locale = getSupportLanguage(language);
+        Locale locale = new Locale(language);
         configuration.setLocale(locale);
         return context.createConfigurationContext(configuration);
     }
 
-    private static void applyLanguage(Context context, String newLanguage) {
+    public static void applyLanguage(Context context, String language) {
         Resources resources = context.getResources();
         Configuration configuration = resources.getConfiguration();
-        configuration.locale = getSupportLanguage(newLanguage);
+        configuration.locale = new Locale(language);
         DisplayMetrics dm = resources.getDisplayMetrics();
         resources.updateConfiguration(configuration, dm);
     }
@@ -108,20 +110,6 @@ public class LanguageManager {
      */
     private static boolean isSupportLanguage(String language) {
         return mSupportLanguages.containsKey(language);
-    }
-
-    /**
-     * 获取支持语言
-     *
-     * @param language language
-     * @return 支持返回支持语言，不支持返回系统首选语言
-     */
-    @TargetApi(Build.VERSION_CODES.N)
-    private static Locale getSupportLanguage(String language) {
-        if (isSupportLanguage(language)) {
-            return mSupportLanguages.get(language);
-        }
-        return getPreferredLanguage();
     }
 
     /**
@@ -139,10 +127,13 @@ public class LanguageManager {
             } else {
                 locale = Locale.getDefault();
             }
+            if (isSupportLanguage(locale.getLanguage())){
+                return locale;
+            }
+            return mLanguage.getDefalutLocale();
         }else {
             locale = mLanguage.getDefalutLocale();
         }
-
         return locale;
     }
 }

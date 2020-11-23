@@ -2,8 +2,8 @@ package com.heaton.baselib.base.recycleview;
 
 import android.content.Context;
 import android.support.annotation.IdRes;
+import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +21,9 @@ import java.util.List;
 public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerViewHolder> {
     protected Context mContext;
     protected int mLayoutId;
-    protected List<T> mDatas;
+    protected List<T> mData;
     protected LayoutInflater mInflater;
+    public int select = -1;//当前选中项
 
     private OnItemClickListener<T> mOnItemClickListener;
     private OnItemLongClickListener<T> mOnItemLongClickListener;
@@ -48,14 +49,23 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
         }
     }
 
-    public RecyclerAdapter(Context context, List<T> datas) {
+    public RecyclerAdapter(Context context, List<T> data, @LayoutRes int layoutId) {
+        mContext = context;
+        mInflater = LayoutInflater.from(context);
+        mLayoutId = layoutId;
+        mData = data;
+    }
+
+    public RecyclerAdapter(Context context, List<T> data) {
         mContext = context;
         mInflater = LayoutInflater.from(context);
         mLayoutId = layoutId();
-        mDatas = datas;
+        mData = data;
     }
 
-    public abstract int layoutId();
+    public int layoutId(){
+        return 0;
+    }
 
     @Override
     public RecyclerViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
@@ -75,7 +85,7 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
                 if (ViewUtils.filter(500))return;
                 if (mOnItemClickListener != null) {
                     int position = getPosition(viewHolder);
-                    mOnItemClickListener.onItemClick(parent, v, mDatas.get(position), position);
+                    mOnItemClickListener.onItemClick(parent, v, mData.get(position), position);
                 }
             }
         });
@@ -84,7 +94,7 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
             public boolean onLongClick(View v) {
                 if (mOnItemLongClickListener != null) {
                     int position = getPosition(viewHolder);
-                    return mOnItemLongClickListener.onItemLongClick(parent, v, mDatas.get(position), position);
+                    return mOnItemLongClickListener.onItemLongClick(parent, v, mData.get(position), position);
                 }
                 return false;
             }
@@ -98,7 +108,7 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
                         if (ViewUtils.filter(500))return;
                         if (mOnItemChildClickListener != null){
                             int position = getPosition(viewHolder);
-                            mOnItemChildClickListener.onItemChildClick(parent, v, mDatas.get(position), position);
+                            mOnItemChildClickListener.onItemChildClick(parent, v, mData.get(position), position);
                         }
                     }
                 });
@@ -109,14 +119,14 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
     @Override
     public void onBindViewHolder(RecyclerViewHolder holder, int position) {
         holder.updatePosition(position);
-        convert(holder, mDatas.get(position));
+        convert(holder, mData.get(position));
     }
 
     public abstract void convert(RecyclerViewHolder holder, T t);
 
     @Override
     public int getItemCount() {
-        return mDatas.size() != 0 ? mDatas.size() : 0;
+        return mData.size() != 0 ? mData.size() : 0;
     }
 
 

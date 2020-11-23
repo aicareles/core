@@ -5,7 +5,15 @@
     android:orientation="vertical"
     android:layout_gravity="center">
 
-    <include layout="@layout/toolbar_layout"/>
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="55dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/colorPrimaryDark"
+        android:text="@string/language"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"

@@ -7,6 +7,8 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.heaton.baselib.app.language.Language;
+import com.heaton.baselib.app.language.LanguageManager;
 import com.heaton.baselib.base.BaseActivity;
 import com.heaton.baselib.callback.ActivityResultCallback;
 import com.heaton.baselib.callback.CallBackUI;
@@ -35,6 +37,8 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        String saveLanguage = LanguageManager.getSaveLanguage(getBaseContext());
+        LanguageManager.applyLanguage(getBaseContext(),saveLanguage);
         if (getDarkModeStatus(this)) {
             setTheme(R.style.main_theme_dark);
         }else {

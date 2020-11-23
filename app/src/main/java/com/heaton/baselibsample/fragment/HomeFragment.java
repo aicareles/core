@@ -74,9 +74,9 @@ public class HomeFragment extends BaseFragment {
 
         initLog();
 
-        if (!NotificationUtil.isNotificationEnabled(getContext())){
+        /*if (!NotificationUtil.isNotificationEnabled(getContext())){
             NotificationUtil.enableNotificationToSet(getContext());
-        }
+        }*/
 
         editText.setOnKeyBoardHideListener(new KeyBoardEditText.OnKeyBoardHideListener() {
             @Override

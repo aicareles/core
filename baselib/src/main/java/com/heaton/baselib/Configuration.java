@@ -8,6 +8,7 @@ public class Configuration {
 
     public boolean loggable;
     public String logTag;
+    public boolean langable;
     public Language language;
     public ApiConfig apiConfig;
 
@@ -19,12 +20,14 @@ public class Configuration {
         loggable = builder.loggable;
         logTag = builder.logTag;
         language = builder.language;
+        langable = builder.langable;
         apiConfig = builder.apiConfig;
     }
 
     public static final class Builder {
         private boolean loggable = true;
         private String logTag = "Heaton_LOGGER";
+        private boolean langable = true;
         private Language language = new Language(Language.MODE.AUTO);
         private ApiConfig apiConfig;
 
@@ -43,6 +46,11 @@ public class Configuration {
 
         public Builder language(Language val) {
             language = val;
+            return this;
+        }
+
+        public Builder langable(boolean val) {
+            langable = val;
             return this;
         }
 

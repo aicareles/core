@@ -86,9 +86,9 @@ public class NavigationBar extends LinearLayout implements View.OnClickListener 
         mViewHolderList = new ArrayList<>();
     }
 
-    public void setCustomAnim(int animEnter, int animEixt){
+    public void setCustomAnim(int animEnter, int animExit){
         this.mAnimEnter = animEnter;
-        this.mAnimExit = animEixt;
+        this.mAnimExit = animExit;
     }
 
     public void addTab(Class frameLayoutClass, TabParam tabParam) {

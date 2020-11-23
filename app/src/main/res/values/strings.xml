@@ -3,4 +3,6 @@
     <string name="btn_sure">确定</string>
     <string name="btn_cancel">取消</string>
     <string name="test">哈哈哈哈哈</string>
+    <string name="getArticle">获取文章</string>
+    <string name="language">语言</string>
 </resources>

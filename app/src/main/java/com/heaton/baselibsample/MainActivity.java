@@ -37,8 +37,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        String saveLanguage = LanguageManager.getSaveLanguage(getBaseContext());
-        LanguageManager.applyLanguage(getBaseContext(),saveLanguage);
         if (getDarkModeStatus(this)) {
             setTheme(R.style.main_theme_dark);
         }else {

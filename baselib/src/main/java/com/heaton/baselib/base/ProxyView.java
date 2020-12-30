@@ -6,6 +6,6 @@ package com.heaton.baselib.base;
  * email: superliu0911@gmail.com
  * des: toast、dialog等
  */
-public class ProxyView {
+public interface ProxyView {
 
 }

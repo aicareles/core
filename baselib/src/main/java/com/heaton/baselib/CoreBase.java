@@ -11,7 +11,7 @@ import com.heaton.baselib.utils.LogUtils;
  * description 核心基础类入口
  * created by jerry on 2019/5/28.
  */
-public class BaseCoreAPI {
+public class CoreBase {
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
 
@@ -33,7 +33,7 @@ public class BaseCoreAPI {
 
     public static Context getContext(){
         if (mContext == null){
-            throw new IllegalStateException("please init BaseCoreAPI");
+            throw new IllegalStateException("please init CoreBase");
         }
         return mContext;
     }

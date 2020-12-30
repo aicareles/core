@@ -2,9 +2,10 @@ package com.heaton.baselibsample;
 
 import android.app.Application;
 
-import com.heaton.baselib.BaseCoreAPI;
+import com.heaton.baselib.CoreBase;
 import com.heaton.baselib.Configuration;
 import com.heaton.baselib.api.ApiConfig;
+import com.heaton.baselib.api.ErrorStatus;
 import com.heaton.baselib.app.language.Language;
 import com.heaton.baselib.crash.CrashHandler;
 import com.heaton.baselibsample.api.MyApiService;
@@ -47,7 +48,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mApplication = this;
-        Language language = new Language(Language.MODE.CUSTOM, Locale.CHINA);
+        Language language = new Language(Language.MODE.AUTO, Locale.ENGLISH);
 //        BaseResponse.Wrapper wrapper = new BaseResponse.Wrapper("status","msg","data");
         ApiConfig apiConfig = new ApiConfig("http://api.e-toys.cn/api/", MyApiService.class, null);
         Configuration configuration = new Configuration
@@ -55,10 +56,9 @@ public class MyApplication extends Application {
                 .loggable(true)
                 .logTag("CoreComponent")
                 .language(language)
-                .langable(false)
                 .apiConfig(apiConfig)
                 .build();
-        BaseCoreAPI.init(this, configuration);
+        CoreBase.init(this, configuration);
         initCrash();
 
     }

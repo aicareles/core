@@ -2,7 +2,6 @@ package com.heaton.baselib.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -28,7 +27,6 @@ public class ViewUtils {
     }
 
     public static Bitmap convertViewToBitmap(View view) {
-        Log.e("TAG", "convertViewToBitmap: "+view.getWidth());
         view.setDrawingCacheEnabled(true);
         view.buildDrawingCache();
         Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);

@@ -2,7 +2,7 @@ package com.heaton.baselib.utils;
 
 import android.content.Context;
 
-import com.heaton.baselib.BaseCoreAPI;
+import com.heaton.baselib.CoreBase;
 
 public class ScreenUtil {
 
@@ -50,12 +50,12 @@ public class ScreenUtil {
     }
 
     public static int dip2px( float dipValue) {
-        final float scale = BaseCoreAPI.getContext().getResources().getDisplayMetrics().density;
+        final float scale = CoreBase.getContext().getResources().getDisplayMetrics().density;
         return (int) (dipValue * scale + 0.5f);
     }
 
     public static int sp2px(float spValue) {
-        final float fontScale = getScale(BaseCoreAPI.getContext());
+        final float fontScale = getScale(CoreBase.getContext());
         return (int) (spValue * fontScale + 0.5f);
     }
 

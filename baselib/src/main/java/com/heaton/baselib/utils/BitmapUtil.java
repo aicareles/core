@@ -1,6 +1,8 @@
 package com.heaton.baselib.utils;
 
 import android.content.Context;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -9,12 +11,15 @@ import android.graphics.ImageFormat;
 import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.YuvImage;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.view.View;
@@ -23,6 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -114,7 +120,6 @@ public class BitmapUtil {
      *  @return bitmap
      */
     public static Bitmap createCircleBitmap(Bitmap source, int strokeWidth, boolean bl,int edge,int color) {
-
         int diameter = source.getWidth() < source.getHeight() ? source.getWidth() : source.getHeight();
         Bitmap target = Bitmap.createBitmap(diameter, diameter, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(target);//创建画布
@@ -193,7 +198,6 @@ public class BitmapUtil {
      * @return bitmap
      */
     public static Bitmap createReflectionBitmap(Bitmap bitmap,float region) {
-
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
         Matrix matrix = new Matrix();
@@ -225,12 +229,12 @@ public class BitmapUtil {
     /**
      * 图片质量压缩
      * @param bitmap
-     * @param many 百分比
+     * @param quality 0-100
      * @return
      */
-    public static Bitmap compressBitmap(Bitmap bitmap, float many){
+    public static Bitmap compressBitmap(Bitmap bitmap, int quality){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, (int)many*100, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
         ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());
         return BitmapFactory.decodeStream(isBm, null, null);
     }
@@ -287,16 +291,17 @@ public class BitmapUtil {
 
     /**
      * YUV视频流格式转bitmap
-     * @param data YUV视频流格式
-     * @return width 设置宽度
-     * @return width 设置高度
+     * @param nv21 YUV视频流格式
+     * @param width 设置宽度
+     * @param width 设置高度
+     * @param quality 图片质量
      */
-    public static Bitmap getBitmap(byte[] data, int width, int height) {
+    public static Bitmap nv21toBitmap(byte[] nv21, int width, int height, int quality) {
         Bitmap bitmap;
-        YuvImage yuvimage = new YuvImage(data, ImageFormat.NV21, width, height, null);
+        YuvImage yuvimage = new YuvImage(nv21, ImageFormat.NV21, width, height, null);
         //data是onPreviewFrame参数提供
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        yuvimage.compressToJpeg(new Rect(0, 0, yuvimage.getWidth(), yuvimage.getHeight()), 100, baos);//
+        yuvimage.compressToJpeg(new Rect(0, 0, yuvimage.getWidth(), yuvimage.getHeight()), quality, baos);//
         // 80--JPG图片的质量[0-100],100最高
         byte[] rawImage = baos.toByteArray();
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -307,11 +312,31 @@ public class BitmapUtil {
     }
 
     /**
+     * YUV视频流格式转bitmap,默认图片质量为100%
+     * @param nv21 YUV视频流格式
+     * @param width 设置宽度
+     * @param width 设置高度
+     */
+    public static Bitmap nv21toBitmap(byte[] nv21, int width, int height) {
+        return nv21toBitmap(nv21, width, height, 100);
+    }
+
+    /**
+     * BitmapFactory.decodeResource 載入的圖片可能會經過縮放，該縮放目前是放在 java 層做的，效率比較低，而且需要消耗 java 層的記憶體。
+     * 因此，如果大量使用該介面載入圖片，容易導致OOM錯誤.
+     * BitmapFactory.decodeStream 不會對所載入的圖片進行縮放，相比之下佔用記憶體少，效率更高。
      * 图片资源文件转bitmap
      * @return bitmap
      */
     public static Bitmap getBitmapResources(Context context, int resId){
-        return BitmapFactory.decodeResource(context.getResources(),resId);
+        InputStream ins = context.getResources().openRawResource(resId);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(ins, null, options);
+        int inSampleSize = 1;
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = inSampleSize;
+        return BitmapFactory.decodeStream(ins, null, options);
     }
 
     /**
@@ -319,8 +344,75 @@ public class BitmapUtil {
      * @Param path 图片路径
      * @return Bitmap
      */
-    public static Bitmap getBitmapPath(String path){
+    public static Bitmap getBitmapFromFile(String path){
         return BitmapFactory.decodeFile(path);
+    }
+
+    public static Bitmap getBitmapFromFile(String path, int width, int height){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+        float srcWidth = options.outWidth;
+        float srcHeight = options.outHeight;
+        int inSampleSize = 1;
+        if (srcHeight > height || srcWidth > width) {
+            if (srcWidth > srcHeight) {
+                inSampleSize = Math.round(srcHeight / height);
+            } else {
+                inSampleSize = Math.round(srcWidth / width);
+            }
+        }
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = inSampleSize;
+        return BitmapFactory.decodeFile(path, options);
+    }
+
+    /**
+     * 获取本地图片  效率高于 getBitmapFromFile()
+     *
+     * @param file 檔案路徑
+     * @param width  寬
+     * @param height  高
+     * @return
+     */
+    public static Bitmap getBitmapFromFD(String file, int width, int height) {
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFileDescriptor(fis.getFD(), null, options);
+            float srcWidth = options.outWidth;
+            float srcHeight = options.outHeight;
+            int inSampleSize = 1;
+            if (srcHeight > height || srcWidth > width) {
+                if (srcWidth > srcHeight) {
+                    inSampleSize = Math.round(srcHeight / height);
+                } else {
+                    inSampleSize = Math.round(srcWidth / width);
+                }
+            }
+            options.inJustDecodeBounds = false;
+            options.inSampleSize = inSampleSize;
+            return BitmapFactory.decodeFileDescriptor(fis.getFD(),null, options);
+        } catch (Exception ex) {
+        }
+        return null;
+    }
+
+    /**
+     * 获取本地图片  效率高于 getBitmapFromFile()
+     * @param file
+     * @return
+     */
+    public static Bitmap getBitmapFromFD(String file){
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(file);
+            return BitmapFactory.decodeFileDescriptor(fis.getFD());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -417,5 +509,100 @@ public class BitmapUtil {
         }
         bitmap = Bitmap.createBitmap(arrayColor, bitmap_w, bitmap_h, Bitmap.Config.ARGB_8888);
         return bitmap;
+    }
+
+    /**
+     * 獲取縮放後的本地圖片(网络加载)
+     *
+     * @param ins  輸入流
+     * @param width 寬
+     * @param height 高
+     * @return
+     */
+    public static Bitmap getBitmapFromInputStream(InputStream ins, int width, int height) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(ins, null, options);
+        float srcWidth = options.outWidth;
+        float srcHeight = options.outHeight;
+        int inSampleSize = 1;
+        if (srcHeight > height || srcWidth > width) {
+            if (srcWidth > srcHeight) {
+                inSampleSize = Math.round(srcHeight / height);
+            } else {
+                inSampleSize = Math.round(srcWidth / width);
+            }
+        }
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = inSampleSize;
+        return BitmapFactory.decodeStream(ins, null, options);
+    }
+
+    /**
+     * 读取本地assets路径下的文件
+     *
+     * @param filePath 文件名
+     * @return bitmap
+     */
+    public static Bitmap getBitmapFromAssetsFile(Context context, String filePath) {
+        Bitmap image = null;
+        AssetManager am = context.getResources().getAssets();
+        try {
+            InputStream is = am.open(filePath);
+            image = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
+
+    public byte[] bitmap2Bytes(Bitmap bm) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        return baos.toByteArray();
+    }
+
+    public Bitmap bytes2Bitmap(byte[] data){
+        return BitmapFactory.decodeByteArray(data, 0, data.length);
+    }
+
+    /**
+     * 读取二进制文件
+     * @param data
+     * @param width
+     * @param height
+     * @return
+     */
+    public static Bitmap bytes2Bitmap(byte[] data, int width, int height) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(data, 0, data.length, options);
+        float srcWidth = options.outWidth;
+        float srcHeight = options.outHeight;
+        int inSampleSize = 1;
+        if (srcHeight > height || srcWidth > width) {
+            if (srcWidth > srcHeight) {
+                inSampleSize = Math.round(srcHeight / height);
+            } else {
+                inSampleSize = Math.round(srcWidth / width);
+            }
+        }
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = inSampleSize;
+        return BitmapFactory.decodeByteArray(data, 0, data.length, options);
+    }
+
+    public static Bitmap drawableToBitmap(Drawable drawable) {
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        drawable.draw(canvas);
+        return bitmap;
+    }
+
+    public static Drawable bitmapToDrawable(Context context, Bitmap bm) {
+        Drawable drawable = new BitmapDrawable(context.getResources(), bm);
+        return drawable;
     }
 }

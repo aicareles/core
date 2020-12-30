@@ -16,7 +16,6 @@ import java.util.List;
 public class Navigation {
     private static final String TAG = "Navigation";
     private static Navigation navigation;
-    private List<Fragment> fragments = new ArrayList<>();
     public MODE mode, initMode = MODE.REPLACE;
     public boolean addToBackStack, initAddToBackStack = true;
     public FragmentManager fragmentManager;
@@ -43,7 +42,9 @@ public class Navigation {
     public void navigate(Fragment fragment){
         if (mode == MODE.REPLACE){
             replace(fragment);
-        }else {
+        }else if (mode == MODE.ADD){
+            add(fragment);
+        } else {
             show(fragment);
         }
         reset();
@@ -56,6 +57,10 @@ public class Navigation {
             fragmentManager.popBackStack();
             return true;
         }
+        int count = fragmentManager.getBackStackEntryCount();
+        for (int i = 0; i < count; ++i) {
+            fragmentManager.popBackStack();
+        }
         return false;
     }
 
@@ -63,7 +68,7 @@ public class Navigation {
         // 开启一个Fragment事务
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         // 先隐藏掉所有的Fragment，以防止有多个Fragment显示在界面上的情况
-        for (Fragment f: fragments) {
+        for (Fragment f: fragmentManager.getFragments()) {
             transaction.hide(f);
         }
         String tag = fragment.getClass().getSimpleName();
@@ -71,7 +76,6 @@ public class Navigation {
         if (target == null){
             target = fragment;
             transaction.add(containerViewId, target, tag);
-            fragments.add(target);
         }else {
             transaction.show(target);
         }
@@ -85,6 +89,15 @@ public class Navigation {
             transaction.hide(target);
             transaction.commitAllowingStateLoss();
         }
+    }
+
+    void add(Fragment fragment) {
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.add(containerViewId, fragment);
+        if (addToBackStack){
+            transaction.addToBackStack(null);
+        }
+        transaction.commitAllowingStateLoss();
     }
 
     void replace(Fragment fragment){
@@ -119,6 +132,6 @@ public class Navigation {
     }
 
     public enum MODE {
-        SHOW, REPLACE
+        SHOW, REPLACE, ADD
     }
 }

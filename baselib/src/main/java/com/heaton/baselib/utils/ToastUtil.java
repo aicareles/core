@@ -3,7 +3,7 @@ package com.heaton.baselib.utils;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.heaton.baselib.BaseCoreAPI;
+import com.heaton.baselib.CoreBase;
 
 
 /**
@@ -14,11 +14,11 @@ public class ToastUtil {
     private static Toast mToast;
 
     public static void show(String msg) {
-        show(BaseCoreAPI.getContext(), msg);
+        show(CoreBase.getContext(), msg);
     }
 
     public static void show(int msg) {
-        show(BaseCoreAPI.getContext(), msg);
+        show(CoreBase.getContext(), msg);
     }
 
     public static void show(Context context, int msg) {

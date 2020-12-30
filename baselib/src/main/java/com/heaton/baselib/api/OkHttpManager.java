@@ -1,8 +1,6 @@
 package com.heaton.baselib.api;
 
-import android.text.TextUtils;
-
-import com.heaton.baselib.BaseCoreAPI;
+import com.heaton.baselib.CoreBase;
 import com.heaton.baselib.api.cookies.PersistentCookieStore;
 import com.heaton.baselib.utils.AppUtils;
 import com.heaton.baselib.utils.LogUtils;
@@ -42,7 +40,7 @@ public class OkHttpManager {
     private static OkHttpClient mOkHttpClient;
     private static SSLSocketFactory socketFactory;
     //设置缓存目录
-    private static File cacheDirectory = new File(BaseCoreAPI.getContext().getCacheDir().getAbsolutePath(), "OkHttpCache");
+    private static File cacheDirectory = new File(CoreBase.getContext().getCacheDir().getAbsolutePath(), "OkHttpCache");
     private static Cache cache = new Cache(cacheDirectory, 10 * 1024 * 1024);
     /**
      * 获取OkHttpClient对象
@@ -87,14 +85,14 @@ public class OkHttpManager {
         @Override
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
-            if (!AppUtils.isNetworkReachable(BaseCoreAPI.getContext())) {
+            if (!AppUtils.isNetworkReachable(CoreBase.getContext())) {
                 LogUtils.logi("MyIntercepter>>>[intercept]: 无网络");
                 request = request.newBuilder()
                         .cacheControl(CacheControl.FORCE_CACHE)//无网络时只从缓存中读取
                         .build();
             }
             Response response = chain.proceed(request);
-            if (AppUtils.isNetworkReachable(BaseCoreAPI.getContext())) {
+            if (AppUtils.isNetworkReachable(CoreBase.getContext())) {
                 int maxAge = 60 * 60; // 有网络时 设置缓存超时时间1个小时
                 response.newBuilder()
                         .removeHeader("Pragma")
@@ -124,7 +122,7 @@ public class OkHttpManager {
      * 自动管理Cookies
      */
     private static class CookiesManager implements CookieJar {
-        private final PersistentCookieStore cookieStore = new PersistentCookieStore(BaseCoreAPI.getContext());
+        private final PersistentCookieStore cookieStore = new PersistentCookieStore(CoreBase.getContext());
 
         @Override
         public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {

@@ -1,6 +1,5 @@
 package com.heaton.baselib.utils;
 
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
@@ -10,7 +9,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.heaton.baselib.BaseCoreAPI;
+import com.heaton.baselib.CoreBase;
 
 /**
  * author: jerry
@@ -20,7 +19,7 @@ import com.heaton.baselib.BaseCoreAPI;
  */
 public class ContextUtils {
     public static int getColor(@ColorRes int resId){
-        return ContextCompat.getColor(BaseCoreAPI.getContext(), resId);
+        return ContextCompat.getColor(CoreBase.getContext(), resId);
     }
 
     public static void setColor(@NonNull TextView textView, @ColorRes int resId){
@@ -28,7 +27,7 @@ public class ContextUtils {
     }
 
     public static Drawable getDrawable(@DrawableRes int id) {
-        return ContextCompat.getDrawable(BaseCoreAPI.getContext(), id);
+        return ContextCompat.getDrawable(CoreBase.getContext(), id);
     }
 
     public static void setDrawable(@NonNull ImageView imageView,  @ColorRes int resId){

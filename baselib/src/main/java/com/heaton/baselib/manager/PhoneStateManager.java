@@ -3,7 +3,7 @@ package com.heaton.baselib.manager;
 import android.content.Context;
 import android.telephony.TelephonyManager;
 
-import com.heaton.baselib.BaseCoreAPI;
+import com.heaton.baselib.CoreBase;
 
 /**
  * description $desc$
@@ -16,7 +16,7 @@ public class PhoneStateManager {
     private PhoneStateListener phoneStateListener;
 
     private PhoneStateManager(){
-        TelephonyManager teleMgr = (TelephonyManager) BaseCoreAPI.getContext().getSystemService(Context.TELEPHONY_SERVICE);
+        TelephonyManager teleMgr = (TelephonyManager) CoreBase.getContext().getSystemService(Context.TELEPHONY_SERVICE);
         teleMgr.listen(listener, android.telephony.PhoneStateListener.LISTEN_CALL_STATE);
     }
 
